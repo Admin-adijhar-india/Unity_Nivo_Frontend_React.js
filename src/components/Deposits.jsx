@@ -18,7 +18,7 @@ export default function Deposits() {
       const token = localStorage.getItem('unity_nivo_token');
       if (!token) return;
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://unity-nivo-backend-nodejs.onrender.com'}/api/user/deposit/deposit-info`, {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://unity-nivo-backend-nodejs.onrender.com'}/api/user/auth/deposit-info`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const json = await res.json();
