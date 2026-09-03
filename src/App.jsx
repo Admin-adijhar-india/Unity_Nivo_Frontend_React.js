@@ -74,7 +74,14 @@ function AdminLayout() {
 function MainAppRouter() {
   const { currentUser } = useContext(AppContext);
 
-  if (!currentUser) {
+  const isAuthPath =
+    window.location.pathname.includes('/register') ||
+    window.location.pathname.includes('/login') ||
+    window.location.search.includes('ref=') ||
+    window.location.search.includes('sponsor=') ||
+    window.location.search.includes('code=');
+
+  if (!currentUser || isAuthPath) {
     return <LandingPage />;
   }
 

@@ -36,13 +36,14 @@ export default function Referral() {
     currentUser?.userid ||
     currentUser?.user_id ||
     currentUser?.referrerCode ||
+    currentUser?.id ||
     '';
 
-const referralLink = referralCode
-  ? `${window.location.origin}/register?ref=${encodeURIComponent(
-      referralCode
-    )}`
-  : '';
+  const referralLink = referralCode
+    ? `${window.location.origin}/register?ref=${encodeURIComponent(
+        referralCode
+      )}`
+    : '';
 
   const copyReferralLink = async () => {
     if (!referralLink) return;

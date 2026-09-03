@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AppContext } from '../context/AppContext';
 // import {
 //   DollarSign,
@@ -59,10 +59,44 @@ export default function LandingPage() {
   const [loginType, setLoginType] = useState('user');
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [sponsorCode, setSponsorCode] = useState('');
   const [authError, setAuthError] = useState('');
   const [authSuccess, setAuthSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Parse URL parameters and route path on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const codeFromUrl =
+      params.get('ref') ||
+      params.get('sponsor') ||
+      params.get('referral') ||
+      params.get('code') ||
+      params.get('refCode') ||
+      params.get('referrer') ||
+      '';
+
+    const path = window.location.pathname;
+
+    if (codeFromUrl) {
+      setSponsorCode(codeFromUrl);
+      setShowRegisterModal(true);
+    } else if (path.includes('/register')) {
+      setShowRegisterModal(true);
+    } else if (path.includes('/login')) {
+      setShowLoginModal(true);
+    }
+  }, []);
+
+  const handleCloseRegisterModal = () => {
+    setShowRegisterModal(false);
+    setAuthError('');
+    setAuthSuccess('');
+    if (window.location.pathname.includes('/register') || window.location.search.includes('ref=')) {
+      window.history.replaceState({}, '', '/');
+    }
+  };
 
   // Login form handler connecting to VITE_API_BASE_URL/api/user/auth/login
   const handleLoginSubmit = async (e) => {
@@ -110,7 +144,7 @@ export default function LandingPage() {
       name: data.get('name'),
       email: data.get('email'),
       mobile: data.get('mobile'),
-      sponsorId: data.get('sponsor') ? data.get('sponsor').trim() : '',
+      sponsorId: data.get('sponsor') ? data.get('sponsor').trim() : (sponsorCode ? sponsorCode.trim() : ''),
       country: data.get('country') || 'India',
       district: data.get('district') || 'Central',
       password: password || '',
@@ -939,8 +973,8 @@ export default function LandingPage() {
         //   </div>
         // </div>
 
-        <div className="mt-[46px] fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-darkbg-card p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+          <div className="w-full max-w-md my-auto max-h-[90vh] overflow-y-auto rounded-2xl border border-white/10 bg-darkbg-card p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
 
             {/* Header */}
             <div className="flex justify-between items-start border-b border-white/5 pb-3 mb-5">
@@ -1127,154 +1161,169 @@ export default function LandingPage() {
 
       {/* MODAL: REGISTER */}
       {showRegisterModal && (
-        <div className=" mt-[40px] fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
-          <div className="w-full max-w-md my-8 rounded-2xl border border-white/10 bg-darkbg-card p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-start border-b border-white/5 pb-3 mb-4">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
+          <div className="w-full max-w-md my-auto max-h-[90vh] flex flex-col rounded-2xl border border-white/10 bg-darkbg-card p-5 sm:p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+            {/* Modal Header */}
+            <div className="flex justify-between items-start border-b border-white/5 pb-3 mb-4 flex-shrink-0">
               <div>
                 <h3 className="text-base font-bold text-white">Register Node Profile</h3>
                 <p className="text-[10px] text-gray-500 mt-0.5">Secure your place in the Unity Nivo compound network</p>
               </div>
               <button
-                onClick={() => setShowRegisterModal(false)}
+                onClick={handleCloseRegisterModal}
                 className="p-1 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
               >
                 <X size={18} />
               </button>
             </div>
 
-            {authError && (
-              <div className="p-2.5 mb-4 text-xs font-semibold rounded-lg bg-red-950/60 border border-red-500/20 text-red-400">
-                {authError}
-              </div>
-            )}
-            {authSuccess && (
-              <div className="p-2.5 mb-4 text-xs font-semibold rounded-lg bg-emerald-950/60 border border-emerald-500/20 text-emerald-400">
-                {authSuccess}
-              </div>
-            )}
-
-            <form onSubmit={handleRegisterSubmit} className="space-y-3.5 text-xs">
-              <div>
-                <label className="text-gray-400 font-bold block mb-1">Full Name</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    placeholder="John Doe"
-                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                  />
+            {/* Modal Body */}
+            <div className="overflow-y-auto pr-1 flex-1 space-y-3.5 custom-scrollbar">
+              {authError && (
+                <div className="p-2.5 text-xs font-semibold rounded-lg bg-red-950/60 border border-red-500/20 text-red-400">
+                  {authError}
                 </div>
-              </div>
-
-              <div>
-                <label className="text-gray-400 font-bold block mb-1">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    placeholder="john.doe@example.com"
-                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                  />
+              )}
+              {authSuccess && (
+                <div className="p-2.5 text-xs font-semibold rounded-lg bg-emerald-950/60 border border-emerald-500/20 text-emerald-400">
+                  {authSuccess}
                 </div>
-              </div>
+              )}
 
-              <div>
-                <label className="text-gray-400 font-bold block mb-1">Mobile Number</label>
-                <div className="relative">
-                  <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                  <input
-                    type="text"
-                    name="mobile"
-                    required
-                    placeholder="+91 98765 43210"
-                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+              <form onSubmit={handleRegisterSubmit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="text-gray-400 font-bold block mb-1">Password</label>
+                  <label className="text-gray-400 font-bold block mb-1">Full Name</label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
                     <input
-                      type="password"
-                      name="password"
+                      type="text"
+                      name="name"
                       required
-                      placeholder="••••••••"
+                      placeholder="John Doe"
                       className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-gray-400 font-bold block mb-1">Confirm Password</label>
+                  <label className="text-gray-400 font-bold block mb-1">Email Address</label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
                     <input
-                      type="password"
-                      name="confirmPassword"
+                      type="email"
+                      name="email"
                       required
-                      placeholder="••••••••"
+                      placeholder="john.doe@example.com"
                       className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
                     />
                   </div>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-gray-400 font-bold block mb-1">Country</label>
+                  <label className="text-gray-400 font-bold block mb-1">Mobile Number</label>
+                  <div className="relative">
+                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+                    <input
+                      type="text"
+                      name="mobile"
+                      required
+                      placeholder="+91 98765 43210"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-gray-400 font-bold block mb-1">Password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+                      <input
+                        type="password"
+                        name="password"
+                        required
+                        placeholder="••••••••"
+                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-gray-400 font-bold block mb-1">Confirm Password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+                      <input
+                        type="password"
+                        name="confirmPassword"
+                        required
+                        placeholder="••••••••"
+                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-gray-400 font-bold block mb-1">Country</label>
+                    <input
+                      type="text"
+                      name="country"
+                      defaultValue="India"
+                      required
+                      placeholder="Country"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-gray-400 font-bold block mb-1">District / City</label>
+                    <input
+                      type="text"
+                      name="district"
+                      defaultValue="Central"
+                      required
+                      placeholder="District"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-gray-400 font-bold block text-xs">
+                      Sponsor User ID / Refer Code
+                    </label>
+                    {sponsorCode && (
+                      <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                        Referral Code Applied
+                      </span>
+                    )}
+                  </div>
                   <input
                     type="text"
-                    name="country"
-                    defaultValue="India"
-                    required
-                    placeholder="Country"
+                    name="sponsor"
+                    value={sponsorCode}
+                    onChange={(e) => setSponsorCode(e.target.value)}
+                    placeholder="UN001 or Refer Code"
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
                   />
                 </div>
 
-                <div>
-                  <label className="text-gray-400 font-bold block mb-1">District / City</label>
-                  <input
-                    type="text"
-                    name="district"
-                    defaultValue="Central"
-                    required
-                    placeholder="District"
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                  />
+                <div className="p-2.5 rounded-xl bg-gold/5 border border-gold/15 text-gold text-[9px] font-semibold flex items-center">
+                  <Sparkles size={14} className="mr-1.5 flex-shrink-0" />
+                  <span>Registering immediately credits $1.00 Join Bonus directly to your new balance!</span>
                 </div>
-              </div>
 
-              <div>
-                <label className="text-gray-400 font-bold block mb-1">Sponsor User ID (Optional)</label>
-                <input
-                  type="text"
-                  name="sponsor"
-                  placeholder="UN001"
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white"
-                />
-              </div>
-
-              <div className="p-2.5 rounded-xl bg-gold/5 border border-gold/15 text-gold text-[9px] font-semibold flex items-center">
-                <Sparkles size={14} className="mr-1.5 flex-shrink-0" />
-                <span>Registering immediately credits $1.00 Join Bonus directly to your new balance!</span>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-2.5 bg-gold text-darkbg font-bold rounded-xl hover:bg-gold-light transition-all flex items-center justify-center text-xs shadow shadow-gold/20 disabled:opacity-50"
-              >
-                {isSubmitting ? 'Creating Account...' : 'Create Account'} <ArrowRight size={14} className="ml-1.5" />
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-2.5 bg-gold text-darkbg font-bold rounded-xl hover:bg-gold-light transition-all flex items-center justify-center text-xs shadow shadow-gold/20 disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Creating Account...' : 'Create Account'} <ArrowRight size={14} className="ml-1.5" />
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       )}
