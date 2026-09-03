@@ -175,9 +175,12 @@ const initialWebsiteContent = {
     { id: 2, image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800', title: 'GROW YOUR WEALTH TOGETHER', text: 'Experience transparent trading pools, automatic compounding and real-time dashboard analytics.', buttonText: 'EXPLORE PLANS', activePeriod: '2026-08-15 to 2026-10-15' }
   ],
   topAchievers: [
-    { id: 1, name: 'John Smith', rank: 'GOLD', displayInfo: 'Business $35,000', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150' },
-    { id: 2, name: 'Emily Rose', rank: 'PLATINUM', displayInfo: 'Business $50,000', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150' },
-    { id: 3, name: 'Michael Lee', rank: 'DIAMOND', displayInfo: 'Business $100,000', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150' }
+    { id: 1, name: 'John Smith', rank: 'GOLD', displayInfo: 'Business $35,000', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300' },
+    { id: 2, name: 'Emily Rose', rank: 'PLATINUM', displayInfo: 'Business $50,000', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300' },
+    { id: 3, name: 'Michael Lee', rank: 'DIAMOND', displayInfo: 'Business $100,000', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300' },
+    { id: 4, name: 'Sophia Martinez', rank: 'CROWN', displayInfo: 'Business $250,000', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300' },
+    { id: 5, name: 'David Kim', rank: 'AMBASSADOR', displayInfo: 'Business $500,000', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300' },
+    { id: 6, name: 'Sarah Jenkins', rank: 'ROYAL CROWN', displayInfo: 'Business $1,000,000', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300' }
   ],
   aboutUs: 'Unity Nivo is a global platform designed to bring people together, create opportunities and help you achieve financial growth through our proven programs.',
   services: 'We offer ROI pool investments, booster multi-tier network bonuses, support for BEP-20 USDT deposits, safe automatic cold-wallet withdrawals, and rank achievements system.',
