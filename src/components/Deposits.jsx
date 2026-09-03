@@ -123,9 +123,9 @@ export default function Deposits() {
     try {
       setDepositsLoading(true);
       setDepositsError("");
-
+// http://localhost:5000/api/user/auth/my
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL || "https://unity-nivo-backend-nodejs.onrender.com"}/api/user/deposit/my`,
+        `${import.meta.env.VITE_API_BASE_URL || "https://unity-nivo-backend-nodejs.onrender.com"}/api/user/auth/my`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
