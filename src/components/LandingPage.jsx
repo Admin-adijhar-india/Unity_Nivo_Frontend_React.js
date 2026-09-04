@@ -58,7 +58,9 @@ import {
   Globe,
   ChevronLeft,
   ChevronRight,
-  MapPin
+  MapPin,
+  Download,
+  FileText
 } from 'lucide-react';
 
 const InstagramIcon = ({ size = 17, className = '' }) => (
@@ -283,7 +285,7 @@ export default function LandingPage() {
 
             <div className="flex items-center justify-center w-14 h-14 sm:w-[70px] sm:h-[64px] md:w-[82px] md:h-[68px] rounded-xl overflow-hidden flex-shrink-0">
               <img
-                src="/public/UnityNivo_Telegram_Bot_Logo_HD-1.png"
+                src="/UnityNivo_Telegram_Bot_Logo_HD-1.png"
                 alt="Unity Nivo Logo"
                 className="w-full h-full object-contain"
               />
@@ -332,8 +334,12 @@ export default function LandingPage() {
             </a>
 
             <a
-              href="#business"
-              className="hover:text-gold transition-colors"
+              href="/UnityNivo_Business_Plan.pdf"
+              download="UnityNivo_Business_Plan.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gold transition-colors flex items-center gap-1"
+              title="Download Business Plan PDF"
             >
               Business Plan
             </a>
@@ -484,15 +490,18 @@ export default function LandingPage() {
 
               {/* Business */}
               <a
-                href="#business"
+                href="/UnityNivo_Business_Plan.pdf"
+                download="UnityNivo_Business_Plan.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-gray-300 hover:bg-white/5 hover:text-gold transition-all"
               >
                 <span className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
-                  <ShieldCheck size={17} />
+                  <FileText size={17} />
                 </span>
 
-                <span>Business Plan</span>
+                <span>Business Plan (PDF)</span>
               </a>
 
               {/* Contact */}
@@ -563,17 +572,22 @@ export default function LandingPage() {
             <p className="text-sm md:text-base text-gray-400 leading-relaxed max-w-lg">
               Achieve your financial goals with Unity Nivo. Build your network nodes, participate in mutual program pools, and track your global yield dashboard.
             </p>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={() => setShowRegisterModal(true)}
                 className="px-6 py-3 bg-gold text-darkbg font-bold rounded-xl flex items-center hover:bg-gold-light transition-all shadow shadow-gold/25 text-xs"
               >
                 JOIN NOW <ArrowRight size={14} className="ml-1.5" />
               </button>
-              <div className="flex items-center space-x-1.5 text-xs font-semibold text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Pool ROI</span>
-              </div>
+              <a
+                href="/UnityNivo_Business_Plan.pdf"
+                download="UnityNivo_Business_Plan.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-3 bg-white/5 border border-white/10 hover:border-gold/50 text-white hover:text-gold font-bold rounded-xl flex items-center transition-all text-xs"
+              >
+                <Download size={14} className="mr-1.5 text-gold" /> Business Plan PDF
+              </a>
             </div>
           </div>
 
@@ -603,14 +617,14 @@ export default function LandingPage() {
             </div>
 
             {/* Caption Overlay */}
-            <div className="absolute bottom-4 left-4 right-4 p-3.5 rounded-xl glass-panel border border-white/10 space-y-1 backdrop-blur-md bg-black/40">
+            {/* <div className="absolute bottom-4 left-4 right-4 p-3.5 rounded-xl glass-panel border border-white/10 space-y-1 backdrop-blur-md bg-black/40">
               <span className="text-[10px] text-gold font-bold uppercase tracking-wider flex items-center gap-1">
                 <Sparkles size={11} /> {heroSlides[heroSlideIndex].title}
               </span>
               <p className="text-xs text-white font-semibold leading-tight">
                 {heroSlides[heroSlideIndex].desc}
               </p>
-            </div>
+            </div> */}
 
             {/* Slide Indicator Dots */}
             <div className="absolute top-4 right-4 flex items-center gap-1.5 z-10 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
@@ -1064,7 +1078,7 @@ export default function LandingPage() {
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 rounded-full bg-gold/25 border border-gold flex items-center justify-center font-bold text-gold">
                 <img
-                  src="/public/UnityNivo_Telegram_Bot_Logo_HD-1.png"
+                  src="/UnityNivo_Telegram_Bot_Logo_HD-1.png"
                   alt="Unity Nivo Logo"
                   className="w-full h-full object-contain"
                 /></div>
@@ -1079,7 +1093,17 @@ export default function LandingPage() {
             <ul className="space-y-2 text-gray-500">
               <li><a href="#about" className="hover:text-gold transition-colors">About Us</a></li>
               <li><a href="#home" className="hover:text-gold transition-colors">Services Info</a></li>
-              <li><a href="#home" className="hover:text-gold transition-colors">Business Plan</a></li>
+              <li>
+                <a
+                  href="/UnityNivo_Business_Plan.pdf"
+                  download="UnityNivo_Business_Plan.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-gold transition-colors flex items-center gap-1"
+                >
+                  Business Plan (PDF)
+                </a>
+              </li>
               <li><a href="#income" className="hover:text-gold transition-colors">Income Plan Grid</a></li>
             </ul>
           </div>
