@@ -681,12 +681,13 @@ export const api = {
         method: "POST",
         body: userData,
       });
-      if (!res.success) {
-        return await request("/api/user/deposit/register", {
-          method: "POST",
-          body: userData,
-        });
-      }
+      console.log(res);
+      // if (!res.success) {
+      //   return await request("/api/user/deposit/register", {
+      //     method: "POST",
+      //     body: userData,
+      //   });
+      // }
       return res;
     },
 
@@ -741,7 +742,7 @@ export const api = {
 
     createDeposit: async (depositData, token) => {
       const authToken = token || localStorage.getItem("unity_nivo_token");
-      return await request("/api/user/auth/", {
+      return await request("/api/user/auth/deposit", {
         method: "POST",
         body: depositData,
         headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
