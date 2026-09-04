@@ -1064,7 +1064,7 @@ export default function LandingPage() {
                 Operational Office
               </span>
               <span className="block text-white font-semibold leading-relaxed break-words">
-                Unity nivo, 302 A-WING, VIVEK TOWER, GONDHAL circle, JAMNAGAR 361005 Gujarat, India
+                Dubai, United Arab Emirates
               </span>
             </div>
           </div>
