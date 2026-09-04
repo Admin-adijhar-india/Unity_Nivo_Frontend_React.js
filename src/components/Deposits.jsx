@@ -90,7 +90,7 @@ export default function Deposits() {
     formData.append("paymentScreenshot", paymentScreenshot); // FIX
 
     try {
-      const res = await fetch(`${BASE_URL}/api/user/deposit`, {
+      const res = await fetch(`${BASE_URL}/api/user/auth`, {
         method: "POST",
         headers: token
           ? {
