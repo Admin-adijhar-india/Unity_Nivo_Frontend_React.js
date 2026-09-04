@@ -57,7 +57,8 @@ import {
   Menu,
   Globe,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  MapPin
 } from 'lucide-react';
 
 const InstagramIcon = ({ size = 17, className = '' }) => (
@@ -1024,18 +1025,33 @@ export default function LandingPage() {
           <p className="text-xs text-gray-400 leading-relaxed max-w-md mx-auto">
             We are here to help you anytime, anywhere. Reach our operational node by submitting a ticket in your dashboard.
           </p>
-          <div className="p-5 rounded-xl border border-white/5 bg-white/[0.01] inline-grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-left max-w-lg mx-auto">
-            <div>
-              <span className="block text-gray-500 font-bold uppercase text-[9px]">Inquiries Email</span>
-              <span className="text-white font-semibold">{websiteContent.contact.email}</span>
+          <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-left max-w-3xl mx-auto shadow-lg">
+            <div className="space-y-1.5 overflow-hidden">
+              <span className="flex items-center gap-1.5 text-gray-400 font-bold uppercase text-[10px] tracking-wider">
+                <Mail size={13} className="text-gold shrink-0" />
+                Inquiries Email
+              </span>
+              <a href="mailto:supportunitynivo@gmail.com" className="block text-white font-semibold hover:text-gold transition-colors break-all">
+                supportunitynivo@gmail.com
+              </a>
             </div>
-            <div>
-              <span className="block text-gray-500 font-bold uppercase text-[9px]">Hotline Phone</span>
-              <span className="text-white font-semibold">{websiteContent.contact.phone}</span>
+            <div className="space-y-1.5 overflow-hidden">
+              <span className="flex items-center gap-1.5 text-gray-400 font-bold uppercase text-[10px] tracking-wider">
+                <Phone size={13} className="text-gold shrink-0" />
+                Hotline Phone
+              </span>
+              <a href="tel:+919288021327" className="block text-white font-semibold hover:text-gold transition-colors break-words">
+                +91 9288021327
+              </a>
             </div>
-            <div>
-              <span className="block text-gray-500 font-bold uppercase text-[9px]">Operational Office</span>
-              <span className="text-white font-semibold leading-tight">{websiteContent.contact.address}</span>
+            <div className="space-y-1.5 overflow-hidden">
+              <span className="flex items-center gap-1.5 text-gray-400 font-bold uppercase text-[10px] tracking-wider">
+                <MapPin size={13} className="text-gold shrink-0" />
+                Operational Office
+              </span>
+              <span className="block text-white font-semibold leading-relaxed break-words">
+                Unity nivo, 302 A-WING, VIVEK TOWER, GONDHAL circle, JAMNAGAR 361005 Gujarat, India
+              </span>
             </div>
           </div>
         </div>

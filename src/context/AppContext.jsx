@@ -185,9 +185,9 @@ const initialWebsiteContent = {
   aboutUs: 'Unity Nivo is a global platform designed to bring people together, create opportunities and help you achieve financial growth through our proven programs.',
   services: 'We offer ROI pool investments, booster multi-tier network bonuses, support for BEP-20 USDT deposits, safe automatic cold-wallet withdrawals, and rank achievements system.',
   contact: {
-    phone: '+44 7911 123456',
-    email: 'support@unitynivo.com',
-    address: 'Level 24, One Canada Square, Canary Wharf, London, E14 5AB'
+    phone: '9288021327',
+    email: 'supportunitynivo@gmail.com',
+    address: 'Unity nivo, 302 A-WING, VIVEK TOWER, GONDHAL circle,JAMNAGAR 361005 Gujarat, India'
   }
 };
 

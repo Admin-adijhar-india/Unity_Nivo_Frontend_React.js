@@ -778,7 +778,7 @@ export const api = {
     // },
 
     login: async (credentials) => {
-      const res = await request("/api/admin/auth/login", {
+      const res = await request("/api/admin/dashboard/login", {
         method: "POST",
         body: credentials,
       });
