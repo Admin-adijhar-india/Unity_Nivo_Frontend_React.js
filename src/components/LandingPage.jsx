@@ -60,7 +60,9 @@ import {
   ChevronRight,
   MapPin,
   Download,
-  FileText
+  FileText,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 const InstagramIcon = ({ size = 17, className = '' }) => (
@@ -111,6 +113,9 @@ export default function LandingPage() {
   const [authSuccess, setAuthSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
 
   // Hero Image Slider State
   const [heroSlideIndex, setHeroSlideIndex] = useState(0);
@@ -189,6 +194,31 @@ export default function LandingPage() {
     }
   }, []);
 
+  const openRegisterModal = () => {
+    setAuthError('');
+    setAuthSuccess('');
+    setShowRegisterModal(true);
+    window.history.pushState({ unityApp: 'modal_register' }, '', window.location.href);
+  };
+
+  const openLoginModal = (role = 'user') => {
+    setLoginRole(role);
+    setAuthError('');
+    setAuthSuccess('');
+    setShowLoginModal(true);
+    window.history.pushState({ unityApp: 'modal_login' }, '', window.location.href);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen((prev) => {
+      const next = !prev;
+      if (next) {
+        window.history.pushState({ unityApp: 'mobile_menu' }, '', window.location.href);
+      }
+      return next;
+    });
+  };
+
   const handleCloseRegisterModal = () => {
     setShowRegisterModal(false);
     setAuthError('');
@@ -197,6 +227,41 @@ export default function LandingPage() {
       window.history.replaceState({}, '', '/');
     }
   };
+
+  const handleCloseLoginModal = () => {
+    setShowLoginModal(false);
+    setAuthError('');
+    setAuthSuccess('');
+    if (window.location.pathname.includes('/login')) {
+      window.history.replaceState({}, '', '/');
+    }
+  };
+
+  // Handle mobile phone back button & browser history state
+  useEffect(() => {
+    if (!window.history.state || !window.history.state.unityApp) {
+      window.history.replaceState({ unityApp: 'landing_root' }, '', window.location.href);
+      window.history.pushState({ unityApp: 'landing_home' }, '', window.location.href);
+    }
+
+    const handlePopState = (e) => {
+      if (showRegisterModal || showLoginModal || mobileMenuOpen) {
+        setShowRegisterModal(false);
+        setShowLoginModal(false);
+        setMobileMenuOpen(false);
+        setAuthError('');
+        setAuthSuccess('');
+        return;
+      }
+
+      if (!e.state || e.state.unityApp === 'landing_root') {
+        window.history.pushState({ unityApp: 'landing_home' }, '', window.location.href);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [showRegisterModal, showLoginModal, mobileMenuOpen]);
 
   // Login form handler connecting to VITE_API_BASE_URL/api/user/auth/login
   const handleLoginSubmit = async (e) => {
@@ -232,6 +297,12 @@ export default function LandingPage() {
     const data = new FormData(e.target);
     const password = data.get('password');
     const confirmPassword = data.get('confirmPassword');
+    const sponsorId = data.get('sponsor') ? data.get('sponsor').trim() : (sponsorCode ? sponsorCode.trim() : '');
+
+    if (!sponsorId) {
+      setAuthError('Sponsor User ID / Refer Code is mandatory to register.');
+      return;
+    }
 
     if (password && confirmPassword && password !== confirmPassword) {
       setAuthError('Password and Confirm Password do not match.');
@@ -244,7 +315,7 @@ export default function LandingPage() {
       name: data.get('name'),
       email: data.get('email'),
       mobile: data.get('mobile'),
-      sponsorId: data.get('sponsor') ? data.get('sponsor').trim() : (sponsorCode ? sponsorCode.trim() : ''),
+      sponsorId: sponsorId,
       country: data.get('country') || 'India',
       district: data.get('district') || 'Central',
       password: password || '',
@@ -356,23 +427,14 @@ export default function LandingPage() {
           <div className="hidden lg:flex items-center space-x-3 text-xs font-bold">
 
             <button
-              onClick={() => {
-                setLoginRole('user');
-                setAuthError('');
-                setAuthSuccess('');
-                setShowLoginModal(true);
-              }}
+              onClick={() => openLoginModal('user')}
               className="px-4 py-2 border border-white/10 hover:border-gold/30 hover:text-white rounded-xl transition-all"
             >
               Login
             </button>
 
             <button
-              onClick={() => {
-                setAuthError('');
-                setAuthSuccess('');
-                setShowRegisterModal(true);
-              }}
+              onClick={openRegisterModal}
               className="px-4 py-2 bg-gold text-darkbg hover:bg-gold-light rounded-xl transition-all shadow shadow-gold/15"
             >
               Register
@@ -385,12 +447,7 @@ export default function LandingPage() {
 
             {/* Mobile Login Icon */}
             <button
-              onClick={() => {
-                setLoginRole('user');
-                setAuthError('');
-                setAuthSuccess('');
-                setShowLoginModal(true);
-              }}
+              onClick={() => openLoginModal('user')}
               className="w-10 h-10 rounded-xl border border-white/10 bg-white/[0.03] text-gray-300 hover:text-gold hover:border-gold/30 flex items-center justify-center transition-all"
               title="Login"
               aria-label="Login"
@@ -400,11 +457,7 @@ export default function LandingPage() {
 
             {/* Mobile Register Icon */}
             <button
-              onClick={() => {
-                setAuthError('');
-                setAuthSuccess('');
-                setShowRegisterModal(true);
-              }}
+              onClick={openRegisterModal}
               className="w-10 h-10 rounded-xl bg-gold text-darkbg hover:bg-gold-light flex items-center justify-center transition-all shadow shadow-gold/20"
               title="Register"
               aria-label="Register"
@@ -414,7 +467,7 @@ export default function LandingPage() {
 
             {/* Hamburger */}
             <button
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              onClick={toggleMobileMenu}
               className="w-10 h-10 rounded-xl border border-white/10 bg-white/[0.03] text-gray-300 hover:text-gold hover:border-gold/30 flex items-center justify-center transition-all"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
@@ -522,11 +575,8 @@ export default function LandingPage() {
 
                 <button
                   onClick={() => {
-                    setLoginRole('user');
                     setMobileMenuOpen(false);
-                    setAuthError('');
-                    setAuthSuccess('');
-                    setShowLoginModal(true);
+                    openLoginModal('user');
                   }}
                   className="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 text-gray-300 hover:text-white hover:border-gold/30 transition-all text-xs font-bold"
                 >
@@ -537,9 +587,7 @@ export default function LandingPage() {
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    setAuthError('');
-                    setAuthSuccess('');
-                    setShowRegisterModal(true);
+                    openRegisterModal();
                   }}
                   className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gold text-darkbg hover:bg-gold-light transition-all text-xs font-bold"
                 >
@@ -574,7 +622,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <button
-                onClick={() => setShowRegisterModal(true)}
+                onClick={openRegisterModal}
                 className="px-6 py-3 bg-gold text-darkbg font-bold rounded-xl flex items-center hover:bg-gold-light transition-all shadow shadow-gold/25 text-xs"
               >
                 JOIN NOW <ArrowRight size={14} className="ml-1.5" />
@@ -1315,11 +1363,7 @@ export default function LandingPage() {
 
               <button
                 type="button"
-                onClick={() => {
-                  setShowLoginModal(false);
-                  setAuthError('');
-                  setAuthSuccess('');
-                }}
+                onClick={handleCloseLoginModal}
                 className="p-1 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
               >
                 <X size={18} />
@@ -1388,7 +1432,7 @@ export default function LandingPage() {
                   />
 
                   <input
-                    type="password"
+                    type={showLoginPassword ? "text" : "password"}
                     name="password"
                     required
                     autoComplete={
@@ -1397,8 +1441,17 @@ export default function LandingPage() {
                         : 'current-password'
                     }
                     placeholder="••••••••"
-                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-10 py-2.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-gold/50 transition-colors"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                    tabIndex="-1"
+                    title={showLoginPassword ? "Hide password" : "Show password"}
+                  >
+                    {showLoginPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
                 </div>
               </div>
 
@@ -1515,66 +1568,80 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-gray-400 font-bold block mb-1">Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                      <input
-                        type="password"
-                        name="password"
-                        required
-                        placeholder="••••••••"
-                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-gray-400 font-bold block mb-1">Confirm Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                      <input
-                        type="password"
-                        name="confirmPassword"
-                        required
-                        placeholder="••••••••"
-                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                      />
-                    </div>
+                <div>
+                  <label className="text-gray-400 font-bold block mb-1">Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+                    <input
+                      type={showRegPassword ? "text" : "password"}
+                      name="password"
+                      required
+                      placeholder="••••••••"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-10 py-2 text-white focus:outline-none focus:border-gold/50"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowRegPassword(!showRegPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                      tabIndex="-1"
+                      title={showRegPassword ? "Hide password" : "Show password"}
+                    >
+                      {showRegPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-gray-400 font-bold block mb-1">Country</label>
+                <div>
+                  <label className="text-gray-400 font-bold block mb-1">Confirm Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
                     <input
-                      type="text"
-                      name="country"
-                      defaultValue="India"
+                      type={showRegConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
                       required
-                      placeholder="Country"
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                      placeholder="••••••••"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-10 py-2 text-white focus:outline-none focus:border-gold/50"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                      tabIndex="-1"
+                      title={showRegConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                      {showRegConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
                   </div>
+                </div>
 
-                  <div>
-                    <label className="text-gray-400 font-bold block mb-1">District / City</label>
-                    <input
-                      type="text"
-                      name="district"
-                      defaultValue="Central"
-                      required
-                      placeholder="District"
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                    />
-                  </div>
+                <div>
+                  <label className="text-gray-400 font-bold block mb-1">Country</label>
+                  <input
+                    type="text"
+                    name="country"
+                    defaultValue="India"
+                    required
+                    placeholder="Country"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-gray-400 font-bold block mb-1">District / City</label>
+                  <input
+                    type="text"
+                    name="district"
+                    defaultValue="Central"
+                    required
+                    placeholder="District"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                  />
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-gray-400 font-bold block text-xs">
-                      Sponsor User ID / Refer Code
+                      Sponsor User ID / Refer Code <span className="text-red-400">*</span>
                     </label>
                     {sponsorCode && (
                       <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
@@ -1585,6 +1652,7 @@ export default function LandingPage() {
                   <input
                     type="text"
                     name="sponsor"
+                    required
                     value={sponsorCode}
                     onChange={(e) => setSponsorCode(e.target.value)}
                     placeholder="UN001 or Refer Code"

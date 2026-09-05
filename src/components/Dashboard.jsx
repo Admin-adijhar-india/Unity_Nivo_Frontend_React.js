@@ -264,7 +264,7 @@ export default function Dashboard({ setActiveTab }) {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         
         {/* Recent Registrations */}
-        <div className="p-5 rounded-2xl border border-white/5 glass-panel flex flex-col">
+        {/* <div className="p-5 rounded-2xl border border-white/5 glass-panel flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-bold text-gray-200">New Registrations</h3>
             <button 
@@ -294,7 +294,7 @@ export default function Dashboard({ setActiveTab }) {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Recent Deposits */}
         <div className="p-5 rounded-2xl border border-white/5 glass-panel flex flex-col">

@@ -47,7 +47,7 @@ export default function Header({ activeTab, setSidebarOpen }) {
       {/* Stats Summary / System Status */}
       <div className="flex items-center space-x-3">
         {/* Render API Docs Button */}
-        <a
+        {/* <a
           href={apiDocsUrl}
           target="_blank"
           rel="noopener noreferrer"
@@ -56,10 +56,10 @@ export default function Header({ activeTab, setSidebarOpen }) {
         >
           <ExternalLink size={13} className="mr-1.5" />
           <span>API Docs</span>
-        </a>
+        </a> */}
 
         {/* API Backend Health Status Badge */}
-        <button
+        {/* <button
           onClick={checkBackendHealth}
           className={`flex items-center px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
             backendStatus === 'connected'
@@ -74,13 +74,13 @@ export default function Header({ activeTab, setSidebarOpen }) {
           <span className="hidden md:inline">Render API: </span>
           <span className="capitalize ml-0.5">{backendStatus}</span>
           {backendStatus === 'checking' && <RefreshCw size={11} className="ml-1.5 animate-spin" />}
-        </button>
+        </button> */}
 
         {/* Network Badge */}
-        <div className="hidden lg:flex items-center px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+        {/* <div className="hidden lg:flex items-center px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
           <Cpu size={13} className="mr-1.5 animate-pulse" />
           {settings.depositNetwork}
-        </div>
+        </div> */}
 
         <div className="relative p-2 text-gray-400 rounded-xl hover:bg-white/5 hover:text-white cursor-pointer transition-colors">
           <Bell size={18} />
@@ -97,7 +97,7 @@ export default function Header({ activeTab, setSidebarOpen }) {
             <h4 className="text-xs font-bold text-gray-200">
               {currentUser?.name || (isAdmin ? 'System Admin' : 'User')}
             </h4>
-            <span className="text-[9px] font-semibold text-emerald-400">Node Connected</span>
+            {/* <span className="text-[9px] font-semibold text-emerald-400">Node Connected</span> */}
           </div>
         </div>
       </div>

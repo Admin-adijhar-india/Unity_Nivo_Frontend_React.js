@@ -122,7 +122,7 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
 
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-white/5 bg-black/20 space-y-2">
-          <a
+          {/* <a
             href={apiDocsUrl || "https://unity-nivo-backend-nodejs.onrender.com/api-docs/"}
             target="_blank"
             rel="noopener noreferrer"
@@ -133,7 +133,7 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
               API Docs (Render)
             </span>
             <span className="text-[10px] bg-gold/20 px-1.5 py-0.5 rounded text-gold-light">v1.0</span>
-          </a>
+          </a> */}
 
           <div className="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/5">
             <div className="flex items-center space-x-2.5 overflow-hidden">
