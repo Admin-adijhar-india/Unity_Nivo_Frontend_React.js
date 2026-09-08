@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { AppContext } from '../context/AppContext';
-import { 
-  Users, 
-  ArrowDownCircle, 
-  ArrowUpCircle, 
-  Clock, 
-  DollarSign, 
-  TrendingUp, 
-  Activity, 
-  ExternalLink 
+import {
+  Users,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Clock,
+  DollarSign,
+  TrendingUp,
+  Activity,
+  ExternalLink
 } from 'lucide-react';
 
 export default function Dashboard({ setActiveTab }) {
@@ -21,7 +21,7 @@ export default function Dashboard({ setActiveTab }) {
   const totalDepositVal = deposits
     .filter(d => d.status === 'confirmed')
     .reduce((sum, d) => sum + (d.amount || 0), 0);
-  
+
   const totalWithdrawalVal = withdrawals
     .filter(w => w.status === 'completed')
     .reduce((sum, w) => sum + (w.netAmount || w.amount || 0), 0);
@@ -40,12 +40,12 @@ export default function Dashboard({ setActiveTab }) {
   const userRank = currentUser?.rank || currentUser?.currentRank || 'None';
 
   // Sort and slice recent activities
-  const userDepositsList = isUserAdmin 
-    ? deposits 
+  const userDepositsList = isUserAdmin
+    ? deposits
     : deposits.filter(d => d.userId === currentUser?.id || d.userName === currentUser?.name);
 
-  const userWithdrawalsList = isUserAdmin 
-    ? withdrawals 
+  const userWithdrawalsList = isUserAdmin
+    ? withdrawals
     : withdrawals.filter(w => w.userId === currentUser?.id || w.userName === currentUser?.name);
 
   const recentDeposits = [...userDepositsList]
@@ -62,19 +62,19 @@ export default function Dashboard({ setActiveTab }) {
 
   const stats = isUserAdmin
     ? [
-        { name: 'Total Users', value: totalUsers, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10 border-blue-500/20' },
-        { name: 'Total Deposits', value: `$${totalDepositVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, icon: ArrowDownCircle, color: 'text-emerald-500', bg: 'bg-emerald-500/10 border-emerald-500/20' },
-        { name: 'Total Withdrawals', value: `$${totalWithdrawalVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, icon: ArrowUpCircle, color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20' },
-        { name: 'Pending Withdrawals', value: `$${pendingWithdrawalVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10 border-amber-500/20' },
-        { name: 'Total Income Paid', value: `$${totalIncomePaidVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, icon: DollarSign, color: 'text-gold', bg: 'bg-gold/10 border-gold/20' },
-      ]
+      { name: 'Total Users', value: totalUsers, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10 border-blue-500/20' },
+      { name: 'Total Deposits', value: `$${totalDepositVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: ArrowDownCircle, color: 'text-emerald-500', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+      { name: 'Total Withdrawals', value: `$${totalWithdrawalVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: ArrowUpCircle, color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20' },
+      { name: 'Pending Withdrawals', value: `$${pendingWithdrawalVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10 border-amber-500/20' },
+      { name: 'Total Income Paid', value: `$${totalIncomePaidVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, color: 'text-gold', bg: 'bg-gold/10 border-gold/20' },
+    ]
     : [
-        { name: 'Available Balance', value: `$${userBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, icon: DollarSign, color: 'text-gold', bg: 'bg-gold/10 border-gold/20' },
-        { name: 'Total Deposited', value: `$${userTotalDeposit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, icon: ArrowDownCircle, color: 'text-emerald-500', bg: 'bg-emerald-500/10 border-emerald-500/20' },
-        { name: 'Total Withdrawn', value: `$${userTotalWithdrawal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, icon: ArrowUpCircle, color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20' },
-        { name: 'Total Income Earned', value: `$${userIncome.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-500/10 border-blue-500/20' },
-        { name: 'Current Rank', value: userRank, icon: Activity, color: 'text-emerald-400', bg: 'bg-emerald-950/40 border-emerald-500/30' },
-      ];
+      { name: 'Available Balance', value: `$${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, color: 'text-gold', bg: 'bg-gold/10 border-gold/20' },
+      { name: 'Total Deposited', value: `$${userTotalDeposit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: ArrowDownCircle, color: 'text-emerald-500', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+      { name: 'Total Withdrawn', value: `$${userTotalWithdrawal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: ArrowUpCircle, color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20' },
+      { name: 'Total Income Earned', value: `$${userIncome.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-500/10 border-blue-500/20' },
+      { name: 'Current Rank', value: userRank, icon: Activity, color: 'text-emerald-400', bg: 'bg-emerald-950/40 border-emerald-500/30' },
+    ];
 
   return (
     <div className="p-6 space-y-8 max-w-7xl mx-auto">
@@ -82,14 +82,14 @@ export default function Dashboard({ setActiveTab }) {
       <div className="relative p-6 overflow-hidden rounded-2xl border border-white/5 glass-panel">
         <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
-        
+
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-white tracking-wide">
               {isUserAdmin ? 'Welcome back, Chief Admin!' : `Welcome back, ${currentUser?.name || 'Valued User'}!`}
             </h3>
             <p className="text-sm text-gray-400 mt-1 max-w-xl">
-              {isUserAdmin 
+              {isUserAdmin
                 ? 'Unity Nivo is operating normally. Monitor daily blockchain deposit confirmations, review pending withdrawal tickets, and maintain platform rules.'
                 : 'Track your personal deposit balances, compound returns, current rank achievements, and withdrawal requests in real time.'}
             </p>
@@ -102,8 +102,8 @@ export default function Dashboard({ setActiveTab }) {
             )}
             <div className="flex items-center space-x-2 bg-emerald-950/40 border border-emerald-500/20 px-4 py-2 rounded-xl text-emerald-400 text-xs font-bold self-start md:self-auto">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              {isUserAdmin 
-                ? 'Blockchain Listener Active (BEP-20)' 
+              {isUserAdmin
+                ? 'Blockchain Listener Active (BEP-20)'
                 : `ID: ${currentUser?.userId || currentUser?.id || 'UN10004'} | Status: ${currentUser?.status || 'Active'}`}
             </div>
           </div>
@@ -115,7 +115,7 @@ export default function Dashboard({ setActiveTab }) {
         {stats.map((item, idx) => {
           const Icon = item.icon;
           return (
-            <div 
+            <div
               key={idx}
               className="p-5 rounded-2xl border border-white/5 glass-panel glass-panel-hover flex flex-col justify-between"
             >
@@ -157,32 +157,32 @@ export default function Dashboard({ setActiveTab }) {
               <line x1="0" y1="50" x2="400" y2="50" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
               <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
               <line x1="0" y1="150" x2="400" y2="150" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-              
+
               {/* Deposits Line Path */}
-              <path 
-                d="M0 160 Q 50 140, 100 120 T 200 90 T 300 110 T 400 50" 
-                fill="none" 
-                stroke="#10b981" 
-                strokeWidth="3.5" 
+              <path
+                d="M0 160 Q 50 140, 100 120 T 200 90 T 300 110 T 400 50"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="3.5"
                 strokeLinecap="round"
               />
-              <path 
-                d="M0 160 Q 50 140, 100 120 T 200 90 T 300 110 T 400 50 L 400 200 L 0 200 Z" 
-                fill="url(#deposit-grad)" 
+              <path
+                d="M0 160 Q 50 140, 100 120 T 200 90 T 300 110 T 400 50 L 400 200 L 0 200 Z"
+                fill="url(#deposit-grad)"
                 opacity="0.1"
               />
 
               {/* Withdrawals Line Path */}
-              <path 
-                d="M0 180 Q 50 170, 100 150 T 200 140 T 300 130 T 400 90" 
-                fill="none" 
-                stroke="#ef4444" 
-                strokeWidth="3.5" 
+              <path
+                d="M0 180 Q 50 170, 100 150 T 200 140 T 300 130 T 400 90"
+                fill="none"
+                stroke="#ef4444"
+                strokeWidth="3.5"
                 strokeLinecap="round"
               />
-              <path 
-                d="M0 180 Q 50 170, 100 150 T 200 140 T 300 130 T 400 90 L 400 200 L 0 200 Z" 
-                fill="url(#withdraw-grad)" 
+              <path
+                d="M0 180 Q 50 170, 100 150 T 200 140 T 300 130 T 400 90 L 400 200 L 0 200 Z"
+                fill="url(#withdraw-grad)"
                 opacity="0.1"
               />
 
@@ -198,7 +198,7 @@ export default function Dashboard({ setActiveTab }) {
                 </linearGradient>
               </defs>
             </svg>
-            
+
             {/* Days Label Row */}
             <div className="absolute bottom-0 left-0 right-0 flex justify-between text-[9px] text-gray-500 font-semibold px-2">
               <span>Mon</span>
@@ -218,7 +218,7 @@ export default function Dashboard({ setActiveTab }) {
             <h3 className="text-sm font-bold text-gray-200">System Activity Score</h3>
             <p className="text-xs text-gray-500">Real-time engagement meter</p>
           </div>
-          
+
           <div className="my-6 flex justify-center items-center">
             {/* Radial Percentage Ring */}
             <div className="relative w-36 h-36 flex items-center justify-center">
@@ -262,7 +262,7 @@ export default function Dashboard({ setActiveTab }) {
 
       {/* Three Lists: Registrations, Deposits, Withdrawals */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        
+
         {/* Recent Registrations */}
         {/* <div className="p-5 rounded-2xl border border-white/5 glass-panel flex flex-col">
           <div className="flex justify-between items-center mb-4">
@@ -300,7 +300,7 @@ export default function Dashboard({ setActiveTab }) {
         <div className="p-5 rounded-2xl border border-white/5 glass-panel flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-bold text-gray-200">Recent Deposits</h3>
-            <button 
+            <button
               onClick={() => setActiveTab('deposits')}
               className="text-[10px] text-gold font-bold hover:underline flex items-center"
             >
@@ -316,9 +316,8 @@ export default function Dashboard({ setActiveTab }) {
                 </div>
                 <div className="text-right">
                   <span className="text-xs font-bold text-white">${dep.amount}</span>
-                  <p className={`text-[9px] font-semibold ${
-                    dep.status === 'confirmed' ? 'text-emerald-400' : dep.status === 'pending' ? 'text-amber-400' : 'text-red-400'
-                  }`}>
+                  <p className={`text-[9px] font-semibold ${dep.status === 'confirmed' ? 'text-emerald-400' : dep.status === 'pending' ? 'text-amber-400' : 'text-red-400'
+                    }`}>
                     {dep.status}
                   </p>
                 </div>
@@ -331,7 +330,7 @@ export default function Dashboard({ setActiveTab }) {
         <div className="p-5 rounded-2xl border border-white/5 glass-panel flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-bold text-gray-200">Recent Withdrawals</h3>
-            <button 
+            <button
               onClick={() => setActiveTab('withdrawals')}
               className="text-[10px] text-gold font-bold hover:underline flex items-center"
             >
@@ -347,9 +346,8 @@ export default function Dashboard({ setActiveTab }) {
                 </div>
                 <div className="text-right">
                   <span className="text-xs font-bold text-white">${wd.netAmount}</span>
-                  <p className={`text-[9px] font-semibold ${
-                    wd.status === 'completed' ? 'text-emerald-400' : wd.status === 'pending' ? 'text-amber-400' : wd.status === 'held' ? 'text-blue-400' : 'text-red-400'
-                  }`}>
+                  <p className={`text-[9px] font-semibold ${wd.status === 'completed' ? 'text-emerald-400' : wd.status === 'pending' ? 'text-amber-400' : wd.status === 'held' ? 'text-blue-400' : 'text-red-400'
+                    }`}>
                     {wd.status}
                   </p>
                 </div>

@@ -247,8 +247,8 @@ export default function Withdrawals() {
 
       {/* Complete Payout Tx Hash Modal */}
       {selectedWdForTx && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-darkbg-card p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
+          <div className="w-full max-w-md max-h-[90vh] flex flex-col rounded-2xl border border-white/10 bg-darkbg-card p-6 shadow-2xl animate-in fade-in zoom-in duration-200 my-auto">
             <h3 className="text-base font-bold text-white mb-2">Assign Blockchain Transaction Hash</h3>
             <p className="text-xs text-gray-400 mb-4">
               Payout for <span className="font-bold text-white">{selectedWdForTx.userName}</span> ({selectedWdForTx.id}) is approved. Enter the BEP-20 transaction hash below to complete the payout.

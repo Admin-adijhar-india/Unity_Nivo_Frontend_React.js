@@ -1,13 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
-import { 
-  DollarSign, 
-  ArrowDownCircle, 
-  ArrowUpCircle, 
-  Plus, 
-  Send, 
-  MessageSquare, 
-  LogOut, 
+import {
+  DollarSign,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Plus,
+  Send,
+  MessageSquare,
+  LogOut,
   Award,
   Wallet,
   Clock,
@@ -18,14 +18,14 @@ import {
 } from 'lucide-react';
 
 export default function UserPanel() {
-  const { 
-    currentUser, 
-    logout, 
-    deposits, 
-    withdrawals, 
-    tickets, 
-    settings, 
-    requestDeposit, 
+  const {
+    currentUser,
+    logout,
+    deposits,
+    withdrawals,
+    tickets,
+    settings,
+    requestDeposit,
     addWithdrawalRequest,
     submitSupportTicket,
     userReplyToTicket
@@ -44,7 +44,7 @@ export default function UserPanel() {
 
   const [tckSubject, setTckSubject] = useState('');
   const [tckMsg, setTckMsg] = useState('');
-  
+
   const [activeTicketId, setActiveTicketId] = useState(null);
   const [chatReply, setChatReply] = useState('');
 
@@ -123,12 +123,12 @@ export default function UserPanel() {
   const myDeposits = deposits.filter(d => d.userId === currentUser.id);
   const myWithdrawals = withdrawals.filter(w => w.userId === currentUser.id);
   const myTickets = tickets.filter(t => t.userId === currentUser.id);
-  
+
   const selectedTicket = myTickets.find(t => t.id === activeTicketId) || myTickets[0];
 
   return (
     <div className="min-h-screen bg-darkbg text-gray-300 flex flex-col text-xs">
-      
+
       {/* Top Header */}
       <header className="sticky top-0 z-30 h-20 px-6 border-b border-white/5 bg-darkbg-deep/80 backdrop-blur-md flex items-center justify-between">
         <div className="flex items-center space-x-3">
@@ -152,11 +152,10 @@ export default function UserPanel() {
                   setActiveTicketId(myTickets[0].id);
                 }
               }}
-              className={`px-3 py-2 rounded-xl transition-all ${
-                activeTab === tab 
-                  ? 'bg-gold/15 border border-gold/30 text-gold shadow' 
+              className={`px-3 py-2 rounded-xl transition-all ${activeTab === tab
+                  ? 'bg-gold/15 border border-gold/30 text-gold shadow'
                   : 'text-gray-400 hover:text-white'
-              }`}
+                }`}
             >
               {tab}
             </button>
@@ -173,7 +172,7 @@ export default function UserPanel() {
               </span>
             </div>
           </div>
-          <button 
+          <button
             onClick={logout}
             className="p-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 rounded-xl transition-colors"
             title="Log Out"
@@ -185,7 +184,7 @@ export default function UserPanel() {
 
       {/* Main Area */}
       <main className="flex-1 p-6 max-w-6xl mx-auto w-full space-y-6 overflow-y-auto">
-        
+
         {/* Success/Error Banners */}
         {successMsg && (
           <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 font-bold animate-in fade-in slide-in-from-top-2">
@@ -201,7 +200,7 @@ export default function UserPanel() {
         {/* SCREEN 1: DASHBOARD */}
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
-            
+
             {/* Balance Highlights */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Spending Balance */}
@@ -288,19 +287,17 @@ export default function UserPanel() {
                         <td className="px-4 py-3 text-[10px] text-gray-500 whitespace-nowrap">{tx.date}</td>
                         <td className="px-4 py-3 font-semibold text-gray-200">{tx.description}</td>
                         <td className="px-4 py-3">
-                          <span className={`inline-flex px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase ${
-                            tx.type === 'deposit' 
-                              ? 'bg-emerald-950 text-emerald-400' 
+                          <span className={`inline-flex px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase ${tx.type === 'deposit'
+                              ? 'bg-emerald-950 text-emerald-400'
                               : tx.type === 'withdrawal'
-                              ? 'bg-red-950 text-red-400'
-                              : 'bg-gold/10 text-gold'
-                          }`}>
+                                ? 'bg-red-950 text-red-400'
+                                : 'bg-gold/10 text-gold'
+                            }`}>
                             {tx.type}
                           </span>
                         </td>
-                        <td className={`px-4 py-3 text-right font-bold ${
-                          tx.type === 'deposit' || tx.type === 'earning' ? 'text-emerald-400' : 'text-red-400'
-                        }`}>
+                        <td className={`px-4 py-3 text-right font-bold ${tx.type === 'deposit' || tx.type === 'earning' ? 'text-emerald-400' : 'text-red-400'
+                          }`}>
                           {tx.type === 'deposit' || tx.type === 'earning' ? '+' : '-'}${tx.amount.toFixed(2)}
                         </td>
                       </tr>
@@ -383,13 +380,12 @@ export default function UserPanel() {
                         <td className="px-4 py-3 font-mono text-[10px] text-gray-500 max-w-[130px] truncate">{dep.txHash}</td>
                         <td className="px-4 py-3 text-gray-500">{dep.dateTime}</td>
                         <td className="px-4 py-3 text-center">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                            dep.status === 'confirmed' 
-                              ? 'bg-emerald-950 text-emerald-400' 
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${dep.status === 'confirmed'
+                              ? 'bg-emerald-950 text-emerald-400'
                               : dep.status === 'pending'
-                              ? 'bg-amber-950 text-amber-400'
-                              : 'bg-red-950 text-red-400'
-                          }`}>
+                                ? 'bg-amber-950 text-amber-400'
+                                : 'bg-red-950 text-red-400'
+                            }`}>
                             {dep.status}
                           </span>
                         </td>
@@ -413,7 +409,7 @@ export default function UserPanel() {
             {/* Form */}
             <div className="lg:col-span-1 p-5 rounded-2xl border border-white/5 glass-panel space-y-4">
               <h3 className="text-xs font-bold text-gold uppercase tracking-wider">Request Payout</h3>
-              
+
               <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1.5">
                 <div className="flex justify-between"><span>Available:</span><span className="font-bold text-white">${currentUser.balance.toFixed(2)}</span></div>
                 <div className="flex justify-between"><span>Minimum withdrawal:</span><span className="font-bold text-white">${settings.minWithdrawal} USDT</span></div>
@@ -468,15 +464,14 @@ export default function UserPanel() {
                         <td className="px-4 py-3 text-right font-extrabold text-emerald-400">${wd.netAmount.toFixed(2)}</td>
                         <td className="px-4 py-3 font-mono text-[10px] text-gray-500 max-w-[100px] truncate">{wd.txHash || 'Pending'}</td>
                         <td className="px-4 py-3 text-center">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                            wd.status === 'completed' 
-                              ? 'bg-emerald-950 text-emerald-400' 
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${wd.status === 'completed'
+                              ? 'bg-emerald-950 text-emerald-400'
                               : wd.status === 'pending'
-                              ? 'bg-amber-950 text-amber-400'
-                              : wd.status === 'held'
-                              ? 'bg-purple-950 text-purple-400'
-                              : 'bg-red-950 text-red-400'
-                          }`}>
+                                ? 'bg-amber-950 text-amber-400'
+                                : wd.status === 'held'
+                                  ? 'bg-purple-950 text-purple-400'
+                                  : 'bg-red-950 text-red-400'
+                            }`}>
                             {wd.status}
                           </span>
                         </td>
@@ -533,21 +528,19 @@ export default function UserPanel() {
                   <button
                     key={t.id}
                     onClick={() => setActiveTicketId(t.id)}
-                    className={`w-full p-4 text-left flex flex-col justify-between transition-colors border-l-2 ${
-                      t.id === activeTicketId 
-                        ? 'bg-white/[0.04] border-gold' 
+                    className={`w-full p-4 text-left flex flex-col justify-between transition-colors border-l-2 ${t.id === activeTicketId
+                        ? 'bg-white/[0.04] border-gold'
                         : 'hover:bg-white/[0.02] border-transparent'
-                    }`}
+                      }`}
                   >
                     <div className="flex justify-between items-start">
                       <span className="font-mono text-xs font-bold text-white">{t.id}</span>
-                      <span className={`inline-flex px-1.5 py-0.2 rounded text-[8px] font-extrabold uppercase ${
-                        t.status === 'open' 
-                          ? 'bg-emerald-950 text-emerald-400' 
+                      <span className={`inline-flex px-1.5 py-0.2 rounded text-[8px] font-extrabold uppercase ${t.status === 'open'
+                          ? 'bg-emerald-950 text-emerald-400'
                           : t.status === 'pending'
-                          ? 'bg-amber-950 text-amber-400'
-                          : 'bg-white/5 text-gray-500'
-                      }`}>
+                            ? 'bg-amber-950 text-amber-400'
+                            : 'bg-white/5 text-gray-500'
+                        }`}>
                         {t.status}
                       </span>
                     </div>
@@ -584,11 +577,10 @@ export default function UserPanel() {
                       const isUser = msg.sender === 'user';
                       return (
                         <div key={idx} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[80%] p-3 rounded-2xl text-xs space-y-1 ${
-                            isUser 
+                          <div className={`max-w-[80%] p-3 rounded-2xl text-xs space-y-1 ${isUser
                               ? 'bg-white/5 border border-white/5 text-gray-200 rounded-tr-none'
                               : 'bg-gold/10 border border-gold/25 text-white rounded-tl-none'
-                          }`}>
+                            }`}>
                             <p>{msg.text}</p>
                             <span className="block text-[8px] text-gray-500 text-right">{msg.timestamp}</span>
                           </div>
