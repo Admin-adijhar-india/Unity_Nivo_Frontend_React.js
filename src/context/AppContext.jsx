@@ -506,24 +506,42 @@ export const AppProvider = ({ children }) => {
     setWithdrawalLogs(prev => [newLog, ...prev]);
   };
 
-  // Add new withdrawal request manually (for testing or user emulation)
-  const addWithdrawalRequest = (userId, amount) => {
-    const user = users.find(u => u.id === userId);
-    if (!user || user.balance < amount) return false;
+  // Add new withdrawal request
+  const addWithdrawalRequest = (userId, amount, walletAddress, upiDetails, remarks) => {
+    const numAmt = Number(amount);
+    if (isNaN(numAmt) || numAmt < (settings.minWithdrawal || 15)) {
+      return { success: false, error: `Minimum withdrawal amount is $${settings.minWithdrawal || 15}` };
+    }
 
-    const charge = (amount * settings.withdrawalCharge) / 100;
-    const netAmount = amount - charge;
+    const targetId = userId || currentUser?.id || currentUser?.userId || currentUser?._id;
+    let targetUser = users.find(u => u.id === targetId || u.userId === targetId || u._id === targetId);
+
+    if (!targetUser && currentUser) {
+      targetUser = currentUser;
+    }
+
+    const availableBal = Number(targetUser?.balance ?? currentUser?.balance ?? 0);
+    if (availableBal < numAmt) {
+      return { success: false, error: "Insufficient available balance for withdrawal" };
+    }
+
+    const chargeRate = settings.withdrawalCharge !== undefined ? settings.withdrawalCharge : 5;
+    const charge = (numAmt * chargeRate) / 100;
+    const netAmount = numAmt - charge;
     const timeStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
-    const newWdId = `WD${Math.floor(200 + Math.random() * 100)}`;
+    const newWdId = `WD${Math.floor(200 + Math.random() * 800)}`;
 
     const newWd = {
       id: newWdId,
-      userId,
-      userName: user.name,
-      amount,
+      userId: targetId || 'USER',
+      userName: targetUser?.name || currentUser?.name || 'User',
+      email: targetUser?.email || currentUser?.email || '',
+      amount: numAmt,
       charge,
       netAmount,
-      wallet: user.wallet,
+      wallet: walletAddress || targetUser?.wallet || currentUser?.wallet || '',
+      upiDetails: upiDetails || '',
+      remarks: remarks || '',
       requestTime: timeStr,
       processedTime: '',
       txHash: '',
@@ -532,27 +550,39 @@ export const AppProvider = ({ children }) => {
 
     setWithdrawals(prev => [newWd, ...prev]);
 
-    // Deduct user balance and log transaction
+    // Deduct user balance and add transaction
     setUsers(prev => prev.map(u => {
-      if (u.id === userId) {
+      if (u.id === targetId || u.userId === targetId || u._id === targetId) {
         const newTx = {
           id: `TX${Math.floor(100 + Math.random() * 900)}`,
           type: 'withdrawal',
-          amount: amount,
+          amount: numAmt,
           date: timeStr,
           status: 'pending',
           description: `USDT Withdrawal Request (${newWdId})`
         };
         return {
           ...u,
-          balance: u.balance - amount,
-          transactions: [newTx, ...u.transactions]
+          balance: Math.max(0, (u.balance || 0) - numAmt),
+          totalWithdrawal: (u.totalWithdrawal || 0) + netAmount,
+          transactions: [newTx, ...(u.transactions || [])]
         };
       }
       return u;
     }));
 
-    return true;
+    if (currentUser) {
+      setCurrentUser(prev => ({
+        ...prev,
+        balance: Math.max(0, (Number(prev?.balance || 0) - numAmt)),
+        totalWithdrawal: (Number(prev?.totalWithdrawal || 0) + netAmount)
+      }));
+    }
+
+    return { 
+      success: true, 
+      message: `Withdrawal request of $${numAmt.toFixed(2)} submitted successfully! (Net Payout: $${netAmount.toFixed(2)})`
+    };
   };
 
   // Manage Website Carousels

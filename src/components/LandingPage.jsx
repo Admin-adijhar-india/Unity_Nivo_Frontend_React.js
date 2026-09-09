@@ -67,22 +67,22 @@ import {
 
 const InstagramIcon = ({ size = 17, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
   </svg>
 );
 
 const FacebookIcon = ({ size = 17, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
   </svg>
 );
 
 const YoutubeIcon = ({ size = 17, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.56 49.56 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
-    <polygon points="10 15 15 12 10 9 10 15"/>
+    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.56 49.56 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+    <polygon points="10 15 15 12 10 9 10 15" />
   </svg>
 );
 
@@ -137,9 +137,9 @@ export default function LandingPage() {
   const achieversList = (websiteContent?.topAchievers && websiteContent.topAchievers.length >= 6)
     ? websiteContent.topAchievers
     : [
-        ...(websiteContent?.topAchievers || []),
-        ...defaultTopAchievers.slice(websiteContent?.topAchievers?.length || 0)
-      ].slice(0, 6);
+      ...(websiteContent?.topAchievers || []),
+      ...defaultTopAchievers.slice(websiteContent?.topAchievers?.length || 0)
+    ].slice(0, 6);
 
   useEffect(() => {
     const updateCardsToShow = () => {
@@ -683,11 +683,10 @@ export default function LandingPage() {
                     e.stopPropagation();
                     setHeroSlideIndex(idx);
                   }}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    heroSlideIndex === idx
+                  className={`h-2 rounded-full transition-all duration-300 ${heroSlideIndex === idx
                       ? 'w-6 bg-gold'
                       : 'w-2 bg-white/30 hover:bg-white/60'
-                  }`}
+                    }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
               ))}
@@ -728,75 +727,75 @@ export default function LandingPage() {
 
       {/* 4. Income Plan Grid */}
       {false && (
-      <section id="income" className="px-6 md:px-16 py-20 border-b border-white/5 max-w-7xl mx-auto space-y-12">
-        <div className="text-center space-y-2">
-          <h3 className="text-xs font-bold text-gold uppercase tracking-widest">Earning Vectors</h3>
-          <h2 className="text-2xl md:text-3xl font-black text-white">OUR INCOME PLAN</h2>
-          <p className="text-xs text-gray-500 max-w-md mx-auto">Multiple commission vectors designed to accelerate wealth compounding</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Cat 1: Join Bonus */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto text-xl font-bold">
-              $
-            </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Join Bonus</h4>
-            {/* <p className="text-2xl font-black text-gold">$1</p> */}
-            <p className="text-xs text-gray-500">Credited to wallet upon successful verification.</p>
+        <section id="income" className="px-6 md:px-16 py-20 border-b border-white/5 max-w-7xl mx-auto space-y-12">
+          <div className="text-center space-y-2">
+            <h3 className="text-xs font-bold text-gold uppercase tracking-widest">Earning Vectors</h3>
+            <h2 className="text-2xl md:text-3xl font-black text-white">OUR INCOME PLAN</h2>
+            <p className="text-xs text-gray-500 max-w-md mx-auto">Multiple commission vectors designed to accelerate wealth compounding</p>
           </div>
 
-          {/* Cat 2: ROI Income */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
-              <TrendingUp size={22} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Cat 1: Join Bonus */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto text-xl font-bold">
+                $
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Join Bonus</h4>
+              {/* <p className="text-2xl font-black text-gold">$1</p> */}
+              <p className="text-xs text-gray-500">Credited to wallet upon successful verification.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">ROI Income</h4>
-            {/* <p className="text-2xl font-black text-gold">0.5% Daily</p> */}
-            <p className="text-xs text-gray-500">Daily yield generated automatically on trading pool funds.</p>
-          </div>
 
-          {/* Cat 3: Referral Income */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-gold/10 border border-gold/20 text-gold flex items-center justify-center mx-auto">
-              <Users size={22} />
+            {/* Cat 2: ROI Income */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                <TrendingUp size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">ROI Income</h4>
+              {/* <p className="text-2xl font-black text-gold">0.5% Daily</p> */}
+              <p className="text-xs text-gray-500">Daily yield generated automatically on trading pool funds.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Referral Income</h4>
-            {/* <p className="text-2xl font-black text-gold">15%</p> */}
-            <p className="text-xs text-gray-500">Immediate bonus credited on direct team nodes deposit volume.</p>
-          </div>
 
-          {/* Cat 4: Booster Income */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center mx-auto">
-              <Sparkles size={22} />
+            {/* Cat 3: Referral Income */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-gold/10 border border-gold/20 text-gold flex items-center justify-center mx-auto">
+                <Users size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Referral Income</h4>
+              {/* <p className="text-2xl font-black text-gold">15%</p> */}
+              <p className="text-xs text-gray-500">Immediate bonus credited on direct team nodes deposit volume.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Booster Income</h4>
-            {/* <p className="text-2xl font-black text-gold">15%</p> */}
-            <p className="text-xs text-gray-500">Accelerated referral pools for high-activity network builders.</p>
-          </div>
 
-          {/* Cat 5: Rank / Achievement Bonus */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mx-auto">
-              <Award size={22} />
+            {/* Cat 4: Booster Income */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center mx-auto">
+                <Sparkles size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Booster Income</h4>
+              {/* <p className="text-2xl font-black text-gold">15%</p> */}
+              <p className="text-xs text-gray-500">Accelerated referral pools for high-activity network builders.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Rank / Achievement</h4>
-            {/* <p className="text-xs text-gold font-bold">One-Time Rewards</p> */}
-            <p className="text-xs text-gray-500">Payouts trigger as direct team business targets are reached.</p>
-          </div>
 
-          {/* Cat 6: Leadership Monthly Bonus */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto">
-              <ShieldCheck size={22} />
+            {/* Cat 5: Rank / Achievement Bonus */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mx-auto">
+                <Award size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Rank / Achievement</h4>
+              {/* <p className="text-xs text-gold font-bold">One-Time Rewards</p> */}
+              <p className="text-xs text-gray-500">Payouts trigger as direct team business targets are reached.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Leadership Pool</h4>
-            {/* <p className="text-xs text-gold font-bold">Monthly Dividends</p> */}
-            <p className="text-xs text-gray-500">A share of global system revenue paid out to top-tier leaders.</p>
+
+            {/* Cat 6: Leadership Monthly Bonus */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto">
+                <ShieldCheck size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Leadership Pool</h4>
+              {/* <p className="text-xs text-gold font-bold">Monthly Dividends</p> */}
+              <p className="text-xs text-gray-500">A share of global system revenue paid out to top-tier leaders.</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
       )}
 
       {/* 5. Social Media Join Bonus Section */}
@@ -977,11 +976,10 @@ export default function LandingPage() {
               <button
                 key={dotIdx}
                 onClick={() => setAchieverIndex(dotIdx)}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  achieverIndex === dotIdx
+                className={`h-2.5 rounded-full transition-all duration-300 ${achieverIndex === dotIdx
                     ? 'w-8 bg-gold shadow shadow-gold/50'
                     : 'w-2.5 bg-white/20 hover:bg-white/40'
-                }`}
+                  }`}
                 aria-label={`Go to slide ${dotIdx + 1}`}
               />
             ))}
@@ -1460,8 +1458,8 @@ export default function LandingPage() {
                 type="submit"
                 disabled={isSubmitting}
                 className={`w-full mt-2 py-2.5 font-bold rounded-xl transition-all flex items-center justify-center text-xs shadow disabled:opacity-50 disabled:cursor-not-allowed ${loginRole === 'admin'
-                    ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-600/20'
-                    : 'bg-gold text-darkbg hover:bg-gold-light shadow-gold/20'
+                  ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-600/20'
+                  : 'bg-gold text-darkbg hover:bg-gold-light shadow-gold/20'
                   }`}
               >
                 {isSubmitting
