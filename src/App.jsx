@@ -12,8 +12,10 @@ import RankBonus from './components/RankBonus';
 import Website from './components/Website';
 import Support from './components/Support';
 import Settings from './components/Settings';
+import ROI from './components/roi';
 import LandingPage from './components/LandingPage';
 import UserPanel from './components/UserPanel';
+import UserRoi from './components/UserRoi';
 
 function AdminLayout() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -82,6 +84,10 @@ function AdminLayout() {
         return <Support />;
       case 'settings':
         return <Settings />;
+      case 'roi':
+        return <ROI />;
+      case 'userRoi':
+        return <UserRoi />;
       default:
         return <Dashboard setActiveTab={handleTabChange} />;
     }

@@ -3,21 +3,21 @@ import { AppContext } from '../context/AppContext';
 import { Search, DollarSign, Award, Users, TrendingUp, Filter } from 'lucide-react';
 
 export default function Income() {
-  const { users } = useContext(AppContext);
+  const { users = [] } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Dynamically calculate totals across the 6 categories for all users
-  const totalJoinBonus = users.reduce((sum, u) => sum + (u.earnings.joinBonus || 0), 0);
-  const totalRoi = users.reduce((sum, u) => sum + (u.earnings.roiIncome || 0), 0);
-  const totalReferral = users.reduce((sum, u) => sum + (u.earnings.referralIncome || 0), 0);
-  const totalBooster = users.reduce((sum, u) => sum + (u.earnings.boosterIncome || 0), 0);
-  const totalRank = users.reduce((sum, u) => sum + (u.earnings.rankBonus || 0), 0);
-  const totalLeadership = users.reduce((sum, u) => sum + (u.earnings.leadershipBonus || 0), 0);
-  const grandTotal = users.reduce((sum, u) => sum + u.income, 0);
+  const totalJoinBonus = users.reduce((sum, u) => sum + (u.earnings?.joinBonus || 0), 0);
+  const totalRoi = users.reduce((sum, u) => sum + (u.earnings?.roiIncome || 0), 0);
+  const totalReferral = users.reduce((sum, u) => sum + (u.earnings?.referralIncome || 0), 0);
+  const totalBooster = users.reduce((sum, u) => sum + (u.earnings?.boosterIncome || 0), 0);
+  const totalRank = users.reduce((sum, u) => sum + (u.earnings?.rankBonus || 0), 0);
+  const totalLeadership = users.reduce((sum, u) => sum + (u.earnings?.leadershipBonus || 0), 0);
+  const grandTotal = users.reduce((sum, u) => sum + (u.income || 0), 0);
 
-  const filteredUsers = users.filter(u => 
-    u.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = (users || []).filter(u => 
+    (u.id || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (u.name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const incomeCategories = [
@@ -101,38 +101,38 @@ export default function Income() {
             </thead>
             <tbody className="divide-y divide-white/5 bg-white/[0.01]">
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-white/[0.02] transition-colors">
+                <tr key={user.id || user._id} className="hover:bg-white/[0.02] transition-colors">
                   <td className="px-6 py-4">
                     <span className="font-semibold text-gray-200 block">{user.name}</span>
-                    <span className="text-[10px] text-gray-500">ID: {user.id} • Rank: {user.currentRank}</span>
+                    <span className="text-[10px] text-gray-500">ID: {user.id || user._id} • Rank: {user.currentRank || 'N/A'}</span>
                   </td>
                   <td className="px-6 py-4 text-center font-semibold text-gray-400">
-                    ${(user.earnings.joinBonus || 0).toFixed(2)}
+                    ${(user.earnings?.joinBonus || 0).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-center font-semibold text-emerald-400">
-                    ${(user.earnings.roiIncome || 0).toFixed(2)}
+                    ${(user.earnings?.roiIncome || 0).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-center font-semibold text-gold">
-                    ${(user.earnings.referralIncome || 0).toFixed(2)}
+                    ${(user.earnings?.referralIncome || 0).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-center font-semibold text-pink-400">
-                    ${(user.earnings.boosterIncome || 0).toFixed(2)}
+                    ${(user.earnings?.boosterIncome || 0).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-center font-semibold text-purple-400">
-                    ${(user.earnings.rankBonus || 0).toFixed(2)}
+                    ${(user.earnings?.rankBonus || 0).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-center font-semibold text-cyan-400">
-                    ${(user.earnings.leadershipBonus || 0).toFixed(2)}
+                    ${(user.earnings?.leadershipBonus || 0).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-right font-extrabold text-white">
-                    ${user.income.toFixed(2)}
+                    ${(user.income || 0).toFixed(2)}
                   </td>
                 </tr>
               ))}
               {filteredUsers.length === 0 && (
                 <tr>
                   <td colSpan="8" className="text-center py-10 text-gray-500 font-semibold">
-                    No matching users found.
+                    No income records found.
                   </td>
                 </tr>
               )}
@@ -143,3 +143,4 @@ export default function Income() {
     </div>
   );
 }
+

@@ -76,6 +76,8 @@ export default function Dashboard({ setActiveTab }) {
       { name: 'Current Rank', value: userRank, icon: Activity, color: 'text-emerald-400', bg: 'bg-emerald-950/40 border-emerald-500/30' },
     ];
 
+   
+
   return (
     <div className="p-6 space-y-8 max-w-7xl mx-auto">
       {/* Welcome Banner */}

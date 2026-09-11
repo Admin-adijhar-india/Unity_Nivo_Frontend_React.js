@@ -14,6 +14,7 @@ export default function Header({ activeTab, setSidebarOpen }) {
       case 'income': return 'Income Categories';
       case 'rankBonus': return 'Rank & Achievements';
       case 'website': return 'Website Manager';
+      case 'roi': return 'ROI Daily Distribution';
       case 'support': return 'Support Center';
       case 'settings': return 'System Settings';
       default: return 'Admin Console';

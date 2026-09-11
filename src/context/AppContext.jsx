@@ -5,168 +5,17 @@ export const AppContext = createContext();
 
 // Default values if localStorage is empty
 const initialUsers = [
-  {
-    id: 'UN001',
-    name: 'John Smith',
-    email: 'john.smith@gmail.com',
-    mobile: '+1 (555) 019-2834',
-    wallet: '0x71C23D...89aB34',
-    sponsor: 'UN000 (Admin)',
-    balance: 250.00,
-    totalDeposit: 1200.00,
-    totalWithdrawal: 600.00,
-    income: 850.00,
-    currentRank: 'Gold',
-    status: 'active',
-    joinedDate: '2026-03-12',
-    earnings: {
-      joinBonus: 1.00,
-      roiIncome: 450.00,
-      referralIncome: 250.00,
-      boosterIncome: 100.00,
-      rankBonus: 49.00,
-      leadershipBonus: 0.00
-    },
-    transactions: [
-      { id: 'TX901', type: 'deposit', amount: 1000.00, date: '2026-03-12 10:14', status: 'completed', description: 'Initial USDT Deposit' },
-      { id: 'TX902', type: 'earning', amount: 1.00, date: '2026-03-12 12:00', status: 'completed', description: 'Social Join Bonus' },
-      { id: 'TX903', type: 'earning', amount: 250.00, date: '2026-04-01 18:00', status: 'completed', description: 'Referral Bonus (UN003 Register)' },
-      { id: 'TX904', type: 'withdrawal', amount: 600.00, date: '2026-05-15 08:30', status: 'completed', description: 'USDT BEP-20 Withdrawal' }
-    ]
-  },
-  {
-    id: 'UN002',
-    name: 'Emily Rose',
-    email: 'emily.rose@yahoo.com',
-    mobile: '+44 20 7946 0958',
-    wallet: '0x9a8F12...cd34EF',
-    sponsor: 'UN001',
-    balance: 1450.00,
-    totalDeposit: 3000.00,
-    totalWithdrawal: 1500.00,
-    income: 2450.00,
-    currentRank: 'Platinum',
-    status: 'active',
-    joinedDate: '2026-01-20',
-    earnings: {
-      joinBonus: 1.00,
-      roiIncome: 1200.00,
-      referralIncome: 800.00,
-      boosterIncome: 350.00,
-      rankBonus: 99.00,
-      leadershipBonus: 0.00
-    },
-    transactions: [
-      { id: 'TX905', type: 'deposit', amount: 3000.00, date: '2026-01-20 14:22', status: 'completed', description: 'USDT BEP-20 Deposit' },
-      { id: 'TX906', type: 'earning', amount: 1.00, date: '2026-01-20 15:00', status: 'completed', description: 'Social Join Bonus' },
-      { id: 'TX907', type: 'withdrawal', amount: 1500.00, date: '2026-06-10 11:15', status: 'completed', description: 'USDT Withdrawal (Success)' }
-    ]
-  },
-  {
-    id: 'UN003',
-    name: 'Michael Lee',
-    email: 'm.lee@techcorp.com',
-    mobile: '+852 9012 3456',
-    wallet: '0x3cBA56...12eF78',
-    sponsor: 'UN001',
-    balance: 85.00,
-    totalDeposit: 500.00,
-    totalWithdrawal: 0.00,
-    income: 85.00,
-    currentRank: 'Diamond',
-    status: 'active',
-    joinedDate: '2026-04-01',
-    earnings: {
-      joinBonus: 1.00,
-      roiIncome: 64.00,
-      referralIncome: 20.00,
-      boosterIncome: 0.00,
-      rankBonus: 0.00,
-      leadershipBonus: 0.00
-    },
-    transactions: [
-      { id: 'TX908', type: 'deposit', amount: 500.00, date: '2026-04-01 17:45', status: 'completed', description: 'USDT BEP-20 Deposit' },
-      { id: 'TX909', type: 'earning', amount: 1.00, date: '2026-04-01 19:00', status: 'completed', description: 'Social Join Bonus' }
-    ]
-  },
-  {
-    id: 'UN004',
-    name: 'Sophia Martinez',
-    email: 'sophia.m@outlook.com',
-    mobile: '+34 612 345 678',
-    wallet: '0xF89a45...78Cd12',
-    sponsor: 'UN002',
-    balance: 0.00,
-    totalDeposit: 150.00,
-    totalWithdrawal: 50.00,
-    income: 50.00,
-    currentRank: 'Active',
-    status: 'blocked',
-    joinedDate: '2026-06-15',
-    earnings: {
-      joinBonus: 1.00,
-      roiIncome: 49.00,
-      referralIncome: 0.00,
-      boosterIncome: 0.00,
-      rankBonus: 0.00,
-      leadershipBonus: 0.00
-    },
-    transactions: [
-      { id: 'TX910', type: 'deposit', amount: 150.00, date: '2026-06-15 09:12', status: 'completed', description: 'USDT BEP-20 Deposit' },
-      { id: 'TX911', type: 'withdrawal', amount: 50.00, date: '2026-07-02 16:30', status: 'completed', description: 'USDT Withdrawal' }
-    ]
-  },
-  {
-    id: 'UN005',
-    name: 'David Kim',
-    email: 'david.kim@gmail.com',
-    mobile: '+82 10-1234-5678',
-    wallet: '0x56EF34...ab90CD',
-    sponsor: 'UN003',
-    balance: 45.00,
-    totalDeposit: 50.00,
-    totalWithdrawal: 0.00,
-    income: 45.00,
-    currentRank: 'Active',
-    status: 'active',
-    joinedDate: '2026-08-01',
-    earnings: {
-      joinBonus: 1.00,
-      roiIncome: 44.00,
-      referralIncome: 0.00,
-      boosterIncome: 0.00,
-      rankBonus: 0.00,
-      leadershipBonus: 0.00
-    },
-    transactions: [
-      { id: 'TX912', type: 'deposit', amount: 50.00, date: '2026-08-01 11:00', status: 'completed', description: 'USDT BEP-20 Deposit' }
-    ]
-  }
+
 ];
 
 const initialDeposits = [
-  { id: 'DEP101', userId: 'UN001', userName: 'John Smith', amount: 1000.00, network: 'BEP-20 USDT', walletAddress: '0x71C23D...89aB34', txHash: '0x3a2f90...bc9942', dateTime: '2026-03-12 10:14', status: 'confirmed' },
-  { id: 'DEP102', userId: 'UN002', userName: 'Emily Rose', amount: 3000.00, network: 'BEP-20 USDT', walletAddress: '0x9a8F12...cd34EF', txHash: '0xbf940a...940af1', dateTime: '2026-01-20 14:22', status: 'confirmed' },
-  { id: 'DEP103', userId: 'UN003', userName: 'Michael Lee', amount: 500.00, network: 'BEP-20 USDT', walletAddress: '0x3cBA56...12eF78', txHash: '0x2a9f4c...3404bb', dateTime: '2026-04-01 17:45', status: 'confirmed' },
-  { id: 'DEP104', userId: 'UN004', userName: 'Sophia Martinez', amount: 150.00, network: 'BEP-20 USDT', walletAddress: '0xF89a45...78Cd12', txHash: '0xcdaef2...89a4ff', dateTime: '2026-06-15 09:12', status: 'confirmed' },
-  { id: 'DEP105', userId: 'UN005', userName: 'David Kim', amount: 50.00, network: 'BEP-20 USDT', walletAddress: '0x56EF34...ab90CD', txHash: '0x90afeb...cb4421', dateTime: '2026-08-01 11:00', status: 'confirmed' },
-  { id: 'DEP106', userId: 'UN001', userName: 'John Smith', amount: 200.00, network: 'BEP-20 USDT', walletAddress: '0x71C23D...89aB34', txHash: '0x40bc98...de1234', dateTime: '2026-08-24 10:30', status: 'pending' },
-  { id: 'DEP107', userId: 'UN003', userName: 'Michael Lee', amount: 25.00, network: 'BEP-20 USDT', walletAddress: '0x3cBA56...12eF78', txHash: '0x8849aa...492aa1', dateTime: '2026-08-24 12:00', status: 'failed' } // Under minimum $30 deposit rule
+
 ];
 
 const initialWithdrawals = [
-  { id: 'WD201', userId: 'UN001', userName: 'John Smith', amount: 631.58, charge: 31.58, netAmount: 600.00, wallet: '0x71C23D...89aB34', requestTime: '2026-05-15 07:00', processedTime: '2026-05-15 08:30', txHash: '0xefba90...ca4201', status: 'completed' },
-  { id: 'WD202', userId: 'UN002', userName: 'Emily Rose', amount: 1578.95, charge: 78.95, netAmount: 1500.00, wallet: '0x9a8F12...cd34EF', requestTime: '2026-06-10 09:30', processedTime: '2026-06-10 11:15', txHash: '0x89a4eb...efba09', status: 'completed' },
-  { id: 'WD203', userId: 'UN004', userName: 'Sophia Martinez', amount: 52.63, charge: 2.63, netAmount: 50.00, wallet: '0xF89a45...78Cd12', requestTime: '2026-07-02 14:00', processedTime: '2026-07-02 16:30', txHash: '0x4490ae...33b91a', status: 'completed' },
-  { id: 'WD204', userId: 'UN001', userName: 'John Smith', amount: 105.26, charge: 5.26, netAmount: 100.00, wallet: '0x71C23D...89aB34', requestTime: '2026-08-24 15:10', processedTime: '', txHash: '', status: 'pending' },
-  { id: 'WD205', userId: 'UN002', userName: 'Emily Rose', amount: 210.53, charge: 10.53, netAmount: 200.00, wallet: '0x9a8F12...cd34EF', requestTime: '2026-08-24 16:00', processedTime: '', txHash: '', status: 'held' }
 ];
 
 const initialWithdrawalLogs = [
-  { id: 'LOG001', withdrawalId: 'WD201', action: 'Approve & Complete', admin: 'Admin', timestamp: '2026-05-15 08:30', details: 'Approved WD201 of $631.58. Tx Hash: 0xefba90...ca4201 saved.' },
-  { id: 'LOG002', withdrawalId: 'WD202', action: 'Approve & Complete', admin: 'Admin', timestamp: '2026-06-10 11:15', details: 'Approved WD202 of $1578.95. Tx Hash: 0x89a4eb...efba09 saved.' },
-  { id: 'LOG003', withdrawalId: 'WD203', action: 'Approve & Complete', admin: 'Admin', timestamp: '2026-07-02 16:30', details: 'Approved WD203 of $52.63. Tx Hash: 0x4490ae...33b91a saved.' },
-  { id: 'LOG004', withdrawalId: 'WD205', action: 'Hold', admin: 'Admin', timestamp: '2026-08-24 16:05', details: 'Placed withdrawal WD205 on hold pending account verification.' }
 ];
 
 const initialWebsiteContent = {
@@ -175,12 +24,6 @@ const initialWebsiteContent = {
     { id: 2, image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800', title: 'GROW YOUR WEALTH TOGETHER', text: 'Experience transparent trading pools, automatic compounding and real-time dashboard analytics.', buttonText: 'EXPLORE PLANS', activePeriod: '2026-08-15 to 2026-10-15' }
   ],
   topAchievers: [
-    { id: 1, name: 'John Smith', rank: 'GOLD', displayInfo: 'Business $35,000', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300' },
-    { id: 2, name: 'Emily Rose', rank: 'PLATINUM', displayInfo: 'Business $50,000', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300' },
-    { id: 3, name: 'Michael Lee', rank: 'DIAMOND', displayInfo: 'Business $100,000', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300' },
-    { id: 4, name: 'Sophia Martinez', rank: 'CROWN', displayInfo: 'Business $250,000', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300' },
-    { id: 5, name: 'David Kim', rank: 'AMBASSADOR', displayInfo: 'Business $500,000', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300' },
-    { id: 6, name: 'Sarah Jenkins', rank: 'ROYAL CROWN', displayInfo: 'Business $1,000,000', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300' }
   ],
   aboutUs: 'Unity Nivo is a global platform designed to bring people together, create opportunities and help you achieve financial growth through our proven programs.',
   services: 'We offer ROI pool investments, booster multi-tier network bonuses, support for BEP-20 USDT deposits, safe automatic cold-wallet withdrawals, and rank achievements system.',
@@ -192,43 +35,7 @@ const initialWebsiteContent = {
 };
 
 const initialTickets = [
-  {
-    id: 'TCK401',
-    userId: 'UN001',
-    userName: 'John Smith',
-    subject: 'Deposit delay on DEP106',
-    status: 'open',
-    createdTime: '2026-08-24 10:45',
-    messages: [
-      { sender: 'user', text: 'Hello, I submitted a deposit for $200 (DEP106) but it is still pending on my screen. Please check.', timestamp: '2026-08-24 10:45' }
-    ]
-  },
-  {
-    id: 'TCK402',
-    userId: 'UN004',
-    userName: 'Sophia Martinez',
-    subject: 'Account Blocked Query',
-    status: 'pending',
-    createdTime: '2026-08-23 15:30',
-    messages: [
-      { sender: 'user', text: 'My account shows status: BLOCKED. Why was my account blocked? I want to withdraw my balance.', timestamp: '2026-08-23 15:30' },
-      { sender: 'admin', text: 'Hello Sophia, your account was flagged for multiple sponsor links violation. Our security team is reviewing it.', timestamp: '2026-08-23 17:00' },
-      { sender: 'user', text: 'Okay, how long does the review take?', timestamp: '2026-08-24 09:00' }
-    ]
-  },
-  {
-    id: 'TCK403',
-    userId: 'UN002',
-    userName: 'Emily Rose',
-    subject: 'Wallet Address Change Request',
-    status: 'resolved',
-    createdTime: '2026-08-20 11:00',
-    messages: [
-      { sender: 'user', text: 'I lost my Trust Wallet keys, I want to update my wallet to 0x9a8F12...cd34EF. Can you change it?', timestamp: '2026-08-20 11:00' },
-      { sender: 'admin', text: 'Hello Emily. I have updated your wallet address to the requested one in your user profile.', timestamp: '2026-08-20 14:10' },
-      { sender: 'user', text: 'Thank you! It works fine now.', timestamp: '2026-08-20 15:00' }
-    ]
-  }
+
 ];
 
 const initialSettings = {
@@ -579,8 +386,13 @@ export const AppProvider = ({ children }) => {
       }));
     }
 
+<<<<<<< HEAD
     return { 
       success: true, 
+=======
+    return {
+      success: true,
+>>>>>>> 2111784 (77)
       message: `Withdrawal request of $${numAmt.toFixed(2)} submitted successfully! (Net Payout: $${netAmount.toFixed(2)})`
     };
   };

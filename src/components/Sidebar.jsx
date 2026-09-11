@@ -14,7 +14,8 @@ import {
   X,
   UserPlus,
   LogOut,
-  Link
+  Link,
+  TrendingUp
 } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
 
@@ -32,6 +33,8 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
     { id: 'referral', name: 'Referral', icon: UserPlus, adminOnly: false },
     { id: 'users', name: 'Users', icon: Users, adminOnly: true },
     { id: 'deposits', name: 'Deposits', icon: ArrowDownToLine, adminOnly: false },
+    { id: 'roi', name: 'ROI', icon: TrendingUp, adminOnly: true },
+    { id: 'userRoi', name: 'ROI History', icon: TrendingUp, adminOnly: false, userOnly: true },
     { id: 'withdrawals', name: 'Withdrawals', icon: ArrowUpFromLine, adminOnly: false },
     { id: 'income', name: 'Income Plan', icon: DollarSign, adminOnly: false },
     { id: 'rankBonus', name: 'Rank & Bonus', icon: Award, adminOnly: false },
@@ -40,8 +43,12 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
     { id: 'settings', name: 'Settings', icon: SettingsIcon, adminOnly: true },
   ];
 
-  const menuItems = allMenuItems.filter(item => isUserAdmin || !item.adminOnly);
-
+  // const menuItems = allMenuItems.filter(item => isUserAdmin || !item.adminOnly);
+  const menuItems = allMenuItems.filter(item => {
+    if (isUserAdmin && item.userOnly) return false;
+    if (!isUserAdmin && item.adminOnly) return false;
+    return true;
+  });
   return (
     <>
       {/* Mobile Backdrop */}
