@@ -110,7 +110,7 @@ export default function RankBonus() {
             <tbody className="divide-y divide-white/5 bg-white/[0.01]">
               {localUsers.map((user) => {
                 const stats = getMockBusinessStats(user.id);
-                
+
                 // Determine eligibility
                 let eligibleRank = 'Active';
                 if (stats.volume >= 100000 && stats.activeReferrals >= 12) eligibleRank = 'Diamond';
@@ -149,7 +149,7 @@ export default function RankBonus() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    {/* <td className="px-6 py-4 text-right">
                       {needsPromotion ? (
                         <button
                           onClick={() => handleManualPromote(user.id, eligibleRank)}
@@ -174,7 +174,7 @@ export default function RankBonus() {
                           )}
                         </div>
                       )}
-                    </td>
+                    </td> */}
                   </tr>
                 );
               })}

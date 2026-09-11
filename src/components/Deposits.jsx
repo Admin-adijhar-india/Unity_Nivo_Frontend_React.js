@@ -90,7 +90,7 @@ export default function Deposits() {
     formData.append("paymentScreenshot", paymentScreenshot); // FIX
 
     try {
-      const res = await fetch(`${BASE_URL}/api/user/deposit`, {
+      const res = await fetch(`${BASE_URL}/api/user/auth`, {
         method: "POST",
         headers: token
           ? {
@@ -115,6 +115,124 @@ export default function Deposits() {
     }
   };
 
+  const getAllDeposits = async () => {
+    const adminToken = localStorage.getItem("unity_nivo_admin_token");
+    console.log("unity_nivo_admin_token", adminToken);
+    try {
+      setDepositsLoading(true);
+      setDepositsError("");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL || "https://unity-nivo-backend-nodejs.onrender.com"}/api/admin/dashboard/get_all`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+      console.log("DEPOSITS DATA:", data);
+
+      const depositList = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+        ? data.data
+        : Array.isArray(data?.deposits)
+        ? data.deposits
+        : [];
+
+      setMyDeposits(depositList);
+      return data;
+    } catch (error) {
+      console.error("GET ALL DEPOSITS ERROR:", error);
+      setDepositsError("Failed to load admin deposits");
+    } finally {
+      setDepositsLoading(false);
+    }
+  };
+
+  const role = localStorage.getItem("unity_nivo_role");
+  const adminToken = localStorage.getItem("unity_nivo_admin_token");
+  const isAdmin = role === "admin" || !!adminToken;
+
+  const handleApproveDeposit = async (depositId) => {
+    const adminToken = localStorage.getItem("unity_nivo_admin_token");
+    if (!isAdmin || !adminToken) {
+      console.warn("Unauthorized attempt to approve deposit.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL || "https://unity-nivo-backend-nodejs.onrender.com"}/api/admin/dashboard/${depositId}/approve`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        await fetch(
+          `${import.meta.env.VITE_API_BASE_URL || "https://unity-nivo-backend-nodejs.onrender.com"}/api/admin/dashboard/deposit/${depositId}/approve`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${adminToken}`,
+            },
+          }
+        );
+      }
+      getAllDeposits();
+    } catch (error) {
+      console.error("Approve deposit error:", error);
+    }
+  };
+
+  const handleRejectDeposit = async (depositId) => {
+    const adminToken = localStorage.getItem("unity_nivo_admin_token");
+    if (!isAdmin || !adminToken) {
+      console.warn("Unauthorized attempt to reject deposit.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL || "https://unity-nivo-backend-nodejs.onrender.com"}/api/admin/dashboard/${depositId}/reject`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+          },
+          body: JSON.stringify({ remark: "Rejected by admin" }),
+        }
+      );
+
+      if (!response.ok) {
+        await fetch(
+          `${import.meta.env.VITE_API_BASE_URL || "https://unity-nivo-backend-nodejs.onrender.com"}/api/admin/dashboard/deposit/${depositId}/reject`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${adminToken}`,
+            },
+            body: JSON.stringify({ remark: "Rejected by admin" }),
+          }
+        );
+      }
+      getAllDeposits();
+    } catch (error) {
+      console.error("Reject deposit error:", error);
+    }
+  };
+
   const fetchMyDeposits = async () => {
     const token = localStorage.getItem("unity_nivo_token");
 
@@ -123,7 +241,6 @@ export default function Deposits() {
     try {
       setDepositsLoading(true);
       setDepositsError("");
-// http://localhost:5000/api/user/auth/my
       const res = await fetch(
         `${import.meta.env.VITE_API_BASE_URL || "https://unity-nivo-backend-nodejs.onrender.com"}/api/user/auth/my`,
         {
@@ -151,21 +268,29 @@ export default function Deposits() {
   };
 
   useEffect(() => {
-    fetchMyDeposits();
-  }, []);
+    if (isAdmin) {
+      getAllDeposits();
+    } else {
+      fetchMyDeposits();
+    }
+  }, [isAdmin]);
 
-
-  const filteredDeposits = myDeposits.filter((deposit) => {
+  const filteredDeposits = (myDeposits || []).filter((deposit) => {
+    const status = deposit?.status?.toLowerCase() || "";
     if (statusFilter === "all") {
       return true;
     }
 
     if (statusFilter === "pending") {
-      return deposit.status === "hold";
+      return status === "pending" || status === "hold";
     }
 
     if (statusFilter === "completed") {
-      return deposit.status === "confirmed";
+      return status === "confirmed" || status === "completed";
+    }
+
+    if (statusFilter === "failed") {
+      return status === "failed" || status === "rejected";
     }
 
     return true;
@@ -228,29 +353,39 @@ export default function Deposits() {
         <h3 className="font-bold mb-2">Submit Payment Proof</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs mb-1">Amount (USDT)</label>
+            <label className="block text-xs mb-1 font-semibold text-gray-300">Amount (USDT / USD)</label>
             <input
               type="number"
               step="0.01"
               value={paymentAmount}
               onChange={e => setPaymentAmount(e.target.value)}
-              className="w-full bg-black/30 border border-emerald-500/30 rounded px-2 py-1 text-xs text-white focus:outline-none"
+              placeholder="Enter amount (e.g. 100)"
+              className="w-full bg-black/30 border border-emerald-500/30 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-400"
               required
             />
+            {/* Live USD to INR Rate Indicator */}
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-1 text-[11px]">
+              <span className="text-gray-400">Current Rate: <span className="font-bold text-gold">1 USD = ₹95.40 INR</span></span>
+              {paymentAmount && Number(paymentAmount) > 0 && (
+                <span className="font-bold text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-md border border-emerald-500/30">
+                  {paymentAmount} USD = ₹{(Number(paymentAmount) * 95.4).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} INR
+                </span>
+              )}
+            </div>
           </div>
           <div>
-            <label className="block text-xs mb-1">Screenshot</label>
+            <label className="block text-xs mb-1 font-semibold text-gray-300">Screenshot</label>
             <input
               type="file"
               accept="image/*"
               onChange={e => setPaymentScreenshot(e.target.files[0])}
-              className="w-full bg-black/30 border border-emerald-500/30 rounded px-2 py-1 text-xs text-white focus:outline-none"
+              className="w-full bg-black/30 border border-emerald-500/30 rounded px-2 py-1.5 text-xs text-white focus:outline-none"
               required
             />
           </div>
         </div>
-        {uploadStatus && <p className="mt-2 text-xs">{uploadStatus}</p>}
-        <button type="submit" className="mt-3 px-4 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs">
+        {uploadStatus && <p className="mt-2 text-xs font-semibold">{uploadStatus}</p>}
+        <button type="submit" className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">
           Upload Payment
         </button>
       </form>
@@ -594,112 +729,147 @@ export default function Deposits() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5 bg-white/[0.01]">
-            {filteredDeposits?.map((deposit) => (
-              <tr key={deposit._id} className="hover:bg-white/[0.02] transition-colors">
-                <td className="px-6 py-4 font-mono text-xs font-bold text-white">
-                  {deposit._id}
-                </td>
-                <td className="px-6 py-4">
-                  <span className="font-semibold text-gray-200 block">{deposit.userName}</span>
-                  <span className="text-[10px] text-gray-500">ID: {deposit.userId}</span>
-                </td>
-                <td className="px-6 py-4 text-right font-extrabold text-white">
-                  ${deposit.amount.toFixed(2)}
-                </td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex px-1.5 py-0.5 rounded-[4px] text-[9px] font-extrabold uppercase bg-emerald-950/60 border border-emerald-500/20 text-emerald-400 mb-1">
-                    {deposit.network}
-                  </span>
-                  <div className="text-[10px] text-gray-400 font-mono break-all max-w-[150px]">
-                    {deposit.walletAddress}
+            {depositsLoading ? (
+              <tr>
+                <td colSpan="9" className="text-center py-12 text-gold">
+                  <div className="flex flex-col items-center justify-center space-y-3">
+                    <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-xs font-semibold text-gray-400">Loading deposits data...</span>
                   </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center space-x-1 font-mono text-xs text-gray-400 max-w-[150px] truncate hover:text-white">
-                    <span>{deposit.txHash}</span>
-                    <a
-                      href={`https://bscscan.com/tx/${deposit.txHash}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-gold-light hover:text-gold flex-shrink-0"
-                    >
-                      <ExternalLink size={12} />
-                    </a>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">
-                  {deposit.createdAt
-                    ? new Date(deposit.createdAt).toLocaleString("en-IN", {
-                      timeZone: "Asia/Kolkata",
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: true,
-                    })
-                    : "N/A"}
-                </td>
-
-                <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">
-                  {deposit.updatedAt
-                    ? new Date(deposit.updatedAt).toLocaleString("en-IN", {
-                      timeZone: "Asia/Kolkata",
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: true,
-                    })
-                    : "N/A"}
-                </td>
-                <td className="px-6 py-4 text-center">
-                  <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${deposit.status === 'confirmed'
-                    ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/20'
-                    : deposit.status === 'pending'
-                      ? 'bg-amber-950/60 text-amber-400 border border-amber-500/20'
-                      : 'bg-red-950/60 text-red-400 border border-red-500/20'
-                    }`}
-                  >
-                    {deposit.status === 'confirmed' && <CheckCircle size={10} className="mr-1" />}
-                    {deposit.status === 'pending' && <Clock size={10} className="mr-1 animate-pulse" />}
-                    {deposit.status === 'failed' && <XCircle size={10} className="mr-1" />}
-                    <span className="capitalize">{deposit.status}</span>
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  {deposit.status === 'pending' ? (
-                    <div className="flex items-center justify-end space-x-1.5">
-                      <button
-                        onClick={() => confirmDeposit(deposit.id)}
-                        className="px-2.5 py-1 text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg transition-colors"
-                        title="Confirm & Credit User"
-                      >
-                        Confirm
-                      </button>
-                      <button
-                        onClick={() => failDeposit(deposit.id)}
-                        className="px-2.5 py-1 text-xs bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors"
-                        title="Mark as Failed"
-                      >
-                        Fail
-                      </button>
-                    </div>
-                  ) : (
-                    <span className="text-xs text-gray-500 font-semibold italic">Audited</span>
-                  )}
                 </td>
               </tr>
-            ))}
-            {filteredDeposits.length === 0 && (
+            ) : filteredDeposits.length === 0 ? (
               <tr>
-                <td colSpan="8" className="text-center py-10 text-gray-500 font-semibold">
+                <td colSpan="9" className="text-center py-10 text-gray-500 font-semibold">
                   No deposits found under filter "{statusFilter}"
                 </td>
               </tr>
+            ) : (
+              filteredDeposits?.map((deposit) => (
+                <tr key={deposit._id || deposit.id} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="px-6 py-4 font-mono text-xs font-bold text-white">
+                    {deposit._id || deposit.id}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="font-semibold text-gray-200 block">{deposit.userName || deposit.user?.name || deposit.userId || 'N/A'}</span>
+                    <span className="text-[10px] text-gray-500">ID: {deposit.userId || deposit.user?._id || 'N/A'}</span>
+                  </td>
+                  <td className="px-6 py-4 text-right font-extrabold text-white">
+                    ${(Number(deposit.amount) || 0).toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex px-1.5 py-0.5 rounded-[4px] text-[9px] font-extrabold uppercase bg-emerald-950/60 border border-emerald-500/20 text-emerald-400 mb-1">
+                      {deposit.network || 'BEP-20'}
+                    </span>
+                    <div className="text-[10px] text-gray-400 font-mono break-all max-w-[150px]">
+                      {deposit.walletAddress || 'N/A'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center space-x-1 font-mono text-xs text-gray-400 max-w-[150px] truncate hover:text-white">
+                      <span>{deposit.txHash || 'N/A'}</span>
+                      {deposit.txHash && (
+                        <a
+                          href={`https://bscscan.com/tx/${deposit.txHash}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-gold-light hover:text-gold flex-shrink-0"
+                        >
+                          <ExternalLink size={12} />
+                        </a>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">
+                    {deposit.createdAt
+                      ? new Date(deposit.createdAt).toLocaleString("en-IN", {
+                        timeZone: "Asia/Kolkata",
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      })
+                      : "N/A"}
+                  </td>
+
+                  <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">
+                    {deposit.updatedAt
+                      ? new Date(deposit.updatedAt).toLocaleString("en-IN", {
+                        timeZone: "Asia/Kolkata",
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      })
+                      : "N/A"}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {(() => {
+                      const st = (deposit.status || 'pending').toLowerCase();
+                      let badgeClass = 'bg-amber-950/60 text-amber-400 border border-amber-500/20';
+                      let icon = <Clock size={10} className="mr-1 animate-pulse" />;
+
+                      if (st === 'confirmed' || st === 'approved') {
+                        badgeClass = 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/20';
+                        icon = <CheckCircle size={10} className="mr-1" />;
+                      } else if (st === 'rejected' || st === 'failed') {
+                        badgeClass = 'bg-red-950/60 text-red-400 border border-red-500/20';
+                        icon = <XCircle size={10} className="mr-1" />;
+                      }
+
+                      return (
+                        <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${badgeClass}`}>
+                          {icon}
+                          <span className="capitalize">{deposit.status}</span>
+                        </span>
+                      );
+                    })()}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {(() => {
+                      const st = (deposit.status || '').toLowerCase();
+                      const isPendingOrHold = st === 'hold' || st === 'pending';
+
+                      if (isAdmin && isPendingOrHold) {
+                        return (
+                          <div className="flex items-center justify-end space-x-1.5">
+                            <button
+                              onClick={() => handleApproveDeposit(deposit._id || deposit.id)}
+                              className="px-2.5 py-1 text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg transition-colors"
+                              title="Approve Deposit"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleRejectDeposit(deposit._id || deposit.id)}
+                              className="px-2.5 py-1 text-xs bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors"
+                              title="Reject Deposit"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        );
+                      }
+
+                      if (isPendingOrHold) {
+                        return (
+                          <span className="text-xs text-amber-400 font-semibold italic">Pending Audit</span>
+                        );
+                      }
+
+                      return (
+                        <span className="text-xs text-gray-500 font-semibold italic">Audited</span>
+                      );
+                    })()}
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>

@@ -14,7 +14,8 @@ import {
   X,
   UserPlus,
   LogOut,
-  Link
+  Link,
+  TrendingUp
 } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
 
@@ -32,6 +33,10 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
     { id: 'referral', name: 'Referral', icon: UserPlus, adminOnly: false },
     { id: 'users', name: 'Users', icon: Users, adminOnly: true },
     { id: 'deposits', name: 'Deposits', icon: ArrowDownToLine, adminOnly: false },
+    // { id: 'roi', name: 'ROI', icon: TrendingUp, adminOnly: true },
+    { id: 'userRoi', name: 'ROI History', icon: TrendingUp, adminOnly: false, userOnly: true },
+    { id: 'roi', name: 'ROI', icon: TrendingUp, adminOnly: true },
+    // { id: 'userRoi', name: 'ROI History', icon: TrendingUp, adminOnly: false, userOnly: true },
     { id: 'withdrawals', name: 'Withdrawals', icon: ArrowUpFromLine, adminOnly: false },
     { id: 'income', name: 'Income Plan', icon: DollarSign, adminOnly: false },
     { id: 'rankBonus', name: 'Rank & Bonus', icon: Award, adminOnly: false },
@@ -40,8 +45,12 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
     { id: 'settings', name: 'Settings', icon: SettingsIcon, adminOnly: true },
   ];
 
-  const menuItems = allMenuItems.filter(item => isUserAdmin || !item.adminOnly);
-
+  // const menuItems = allMenuItems.filter(item => isUserAdmin || !item.adminOnly);
+  const menuItems = allMenuItems.filter(item => {
+    if (isUserAdmin && item.userOnly) return false;
+    if (!isUserAdmin && item.adminOnly) return false;
+    return true;
+  });
   return (
     <>
       {/* Mobile Backdrop */}
@@ -122,7 +131,7 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
 
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-white/5 bg-black/20 space-y-2">
-          <a
+          {/* <a
             href={apiDocsUrl || "https://unity-nivo-backend-nodejs.onrender.com/api-docs/"}
             target="_blank"
             rel="noopener noreferrer"
@@ -133,7 +142,7 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
               API Docs (Render)
             </span>
             <span className="text-[10px] bg-gold/20 px-1.5 py-0.5 rounded text-gold-light">v1.0</span>
-          </a>
+          </a> */}
 
           <div className="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/5">
             <div className="flex items-center space-x-2.5 overflow-hidden">

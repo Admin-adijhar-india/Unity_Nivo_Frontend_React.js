@@ -57,27 +57,32 @@ import {
   Menu,
   Globe,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  MapPin,
+  Download,
+  FileText,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 const InstagramIcon = ({ size = 17, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
   </svg>
 );
 
 const FacebookIcon = ({ size = 17, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
   </svg>
 );
 
 const YoutubeIcon = ({ size = 17, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.56 49.56 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
-    <polygon points="10 15 15 12 10 9 10 15"/>
+    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.56 49.56 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+    <polygon points="10 15 15 12 10 9 10 15" />
   </svg>
 );
 
@@ -108,6 +113,9 @@ export default function LandingPage() {
   const [authSuccess, setAuthSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
 
   // Hero Image Slider State
   const [heroSlideIndex, setHeroSlideIndex] = useState(0);
@@ -129,9 +137,9 @@ export default function LandingPage() {
   const achieversList = (websiteContent?.topAchievers && websiteContent.topAchievers.length >= 6)
     ? websiteContent.topAchievers
     : [
-        ...(websiteContent?.topAchievers || []),
-        ...defaultTopAchievers.slice(websiteContent?.topAchievers?.length || 0)
-      ].slice(0, 6);
+      ...(websiteContent?.topAchievers || []),
+      ...defaultTopAchievers.slice(websiteContent?.topAchievers?.length || 0)
+    ].slice(0, 6);
 
   useEffect(() => {
     const updateCardsToShow = () => {
@@ -186,6 +194,31 @@ export default function LandingPage() {
     }
   }, []);
 
+  const openRegisterModal = () => {
+    setAuthError('');
+    setAuthSuccess('');
+    setShowRegisterModal(true);
+    window.history.pushState({ unityApp: 'modal_register' }, '', window.location.href);
+  };
+
+  const openLoginModal = (role = 'user') => {
+    setLoginRole(role);
+    setAuthError('');
+    setAuthSuccess('');
+    setShowLoginModal(true);
+    window.history.pushState({ unityApp: 'modal_login' }, '', window.location.href);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen((prev) => {
+      const next = !prev;
+      if (next) {
+        window.history.pushState({ unityApp: 'mobile_menu' }, '', window.location.href);
+      }
+      return next;
+    });
+  };
+
   const handleCloseRegisterModal = () => {
     setShowRegisterModal(false);
     setAuthError('');
@@ -194,6 +227,41 @@ export default function LandingPage() {
       window.history.replaceState({}, '', '/');
     }
   };
+
+  const handleCloseLoginModal = () => {
+    setShowLoginModal(false);
+    setAuthError('');
+    setAuthSuccess('');
+    if (window.location.pathname.includes('/login')) {
+      window.history.replaceState({}, '', '/');
+    }
+  };
+
+  // Handle mobile phone back button & browser history state
+  useEffect(() => {
+    if (!window.history.state || !window.history.state.unityApp) {
+      window.history.replaceState({ unityApp: 'landing_root' }, '', window.location.href);
+      window.history.pushState({ unityApp: 'landing_home' }, '', window.location.href);
+    }
+
+    const handlePopState = (e) => {
+      if (showRegisterModal || showLoginModal || mobileMenuOpen) {
+        setShowRegisterModal(false);
+        setShowLoginModal(false);
+        setMobileMenuOpen(false);
+        setAuthError('');
+        setAuthSuccess('');
+        return;
+      }
+
+      if (!e.state || e.state.unityApp === 'landing_root') {
+        window.history.pushState({ unityApp: 'landing_home' }, '', window.location.href);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [showRegisterModal, showLoginModal, mobileMenuOpen]);
 
   // Login form handler connecting to VITE_API_BASE_URL/api/user/auth/login
   const handleLoginSubmit = async (e) => {
@@ -229,6 +297,12 @@ export default function LandingPage() {
     const data = new FormData(e.target);
     const password = data.get('password');
     const confirmPassword = data.get('confirmPassword');
+    const sponsorId = data.get('sponsor') ? data.get('sponsor').trim() : (sponsorCode ? sponsorCode.trim() : '');
+
+    if (!sponsorId) {
+      setAuthError('Sponsor User ID / Refer Code is mandatory to register.');
+      return;
+    }
 
     if (password && confirmPassword && password !== confirmPassword) {
       setAuthError('Password and Confirm Password do not match.');
@@ -241,7 +315,7 @@ export default function LandingPage() {
       name: data.get('name'),
       email: data.get('email'),
       mobile: data.get('mobile'),
-      sponsorId: data.get('sponsor') ? data.get('sponsor').trim() : (sponsorCode ? sponsorCode.trim() : ''),
+      sponsorId: sponsorId,
       country: data.get('country') || 'India',
       district: data.get('district') || 'Central',
       password: password || '',
@@ -282,7 +356,7 @@ export default function LandingPage() {
 
             <div className="flex items-center justify-center w-14 h-14 sm:w-[70px] sm:h-[64px] md:w-[82px] md:h-[68px] rounded-xl overflow-hidden flex-shrink-0">
               <img
-                src="/public/UnityNivo_Telegram_Bot_Logo_HD-1.png"
+                src="/UnityNivo_Telegram_Bot_Logo_HD-1.png"
                 alt="Unity Nivo Logo"
                 className="w-full h-full object-contain"
               />
@@ -331,8 +405,12 @@ export default function LandingPage() {
             </a>
 
             <a
-              href="#business"
-              className="hover:text-gold transition-colors"
+              href="/UnityNivo_Business_Plan.pdf"
+              download="UnityNivo_Business_Plan.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gold transition-colors flex items-center gap-1"
+              title="Download Business Plan PDF"
             >
               Business Plan
             </a>
@@ -349,23 +427,14 @@ export default function LandingPage() {
           <div className="hidden lg:flex items-center space-x-3 text-xs font-bold">
 
             <button
-              onClick={() => {
-                setLoginRole('user');
-                setAuthError('');
-                setAuthSuccess('');
-                setShowLoginModal(true);
-              }}
+              onClick={() => openLoginModal('user')}
               className="px-4 py-2 border border-white/10 hover:border-gold/30 hover:text-white rounded-xl transition-all"
             >
               Login
             </button>
 
             <button
-              onClick={() => {
-                setAuthError('');
-                setAuthSuccess('');
-                setShowRegisterModal(true);
-              }}
+              onClick={openRegisterModal}
               className="px-4 py-2 bg-gold text-darkbg hover:bg-gold-light rounded-xl transition-all shadow shadow-gold/15"
             >
               Register
@@ -378,12 +447,7 @@ export default function LandingPage() {
 
             {/* Mobile Login Icon */}
             <button
-              onClick={() => {
-                setLoginRole('user');
-                setAuthError('');
-                setAuthSuccess('');
-                setShowLoginModal(true);
-              }}
+              onClick={() => openLoginModal('user')}
               className="w-10 h-10 rounded-xl border border-white/10 bg-white/[0.03] text-gray-300 hover:text-gold hover:border-gold/30 flex items-center justify-center transition-all"
               title="Login"
               aria-label="Login"
@@ -393,11 +457,7 @@ export default function LandingPage() {
 
             {/* Mobile Register Icon */}
             <button
-              onClick={() => {
-                setAuthError('');
-                setAuthSuccess('');
-                setShowRegisterModal(true);
-              }}
+              onClick={openRegisterModal}
               className="w-10 h-10 rounded-xl bg-gold text-darkbg hover:bg-gold-light flex items-center justify-center transition-all shadow shadow-gold/20"
               title="Register"
               aria-label="Register"
@@ -407,7 +467,7 @@ export default function LandingPage() {
 
             {/* Hamburger */}
             <button
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              onClick={toggleMobileMenu}
               className="w-10 h-10 rounded-xl border border-white/10 bg-white/[0.03] text-gray-300 hover:text-gold hover:border-gold/30 flex items-center justify-center transition-all"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
@@ -483,15 +543,18 @@ export default function LandingPage() {
 
               {/* Business */}
               <a
-                href="#business"
+                href="/UnityNivo_Business_Plan.pdf"
+                download="UnityNivo_Business_Plan.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-gray-300 hover:bg-white/5 hover:text-gold transition-all"
               >
                 <span className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
-                  <ShieldCheck size={17} />
+                  <FileText size={17} />
                 </span>
 
-                <span>Business Plan</span>
+                <span>Business Plan (PDF)</span>
               </a>
 
               {/* Contact */}
@@ -512,11 +575,8 @@ export default function LandingPage() {
 
                 <button
                   onClick={() => {
-                    setLoginRole('user');
                     setMobileMenuOpen(false);
-                    setAuthError('');
-                    setAuthSuccess('');
-                    setShowLoginModal(true);
+                    openLoginModal('user');
                   }}
                   className="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 text-gray-300 hover:text-white hover:border-gold/30 transition-all text-xs font-bold"
                 >
@@ -527,9 +587,7 @@ export default function LandingPage() {
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    setAuthError('');
-                    setAuthSuccess('');
-                    setShowRegisterModal(true);
+                    openRegisterModal();
                   }}
                   className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gold text-darkbg hover:bg-gold-light transition-all text-xs font-bold"
                 >
@@ -562,17 +620,22 @@ export default function LandingPage() {
             <p className="text-sm md:text-base text-gray-400 leading-relaxed max-w-lg">
               Achieve your financial goals with Unity Nivo. Build your network nodes, participate in mutual program pools, and track your global yield dashboard.
             </p>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-wrap items-center gap-3">
               <button
-                onClick={() => setShowRegisterModal(true)}
+                onClick={openRegisterModal}
                 className="px-6 py-3 bg-gold text-darkbg font-bold rounded-xl flex items-center hover:bg-gold-light transition-all shadow shadow-gold/25 text-xs"
               >
                 JOIN NOW <ArrowRight size={14} className="ml-1.5" />
               </button>
-              <div className="flex items-center space-x-1.5 text-xs font-semibold text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Pool ROI</span>
-              </div>
+              <a
+                href="/UnityNivo_Business_Plan.pdf"
+                download="UnityNivo_Business_Plan.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-3 bg-white/5 border border-white/10 hover:border-gold/50 text-white hover:text-gold font-bold rounded-xl flex items-center transition-all text-xs"
+              >
+                <Download size={14} className="mr-1.5 text-gold" /> Business Plan PDF
+              </a>
             </div>
           </div>
 
@@ -602,14 +665,14 @@ export default function LandingPage() {
             </div>
 
             {/* Caption Overlay */}
-            <div className="absolute bottom-4 left-4 right-4 p-3.5 rounded-xl glass-panel border border-white/10 space-y-1 backdrop-blur-md bg-black/40">
+            {/* <div className="absolute bottom-4 left-4 right-4 p-3.5 rounded-xl glass-panel border border-white/10 space-y-1 backdrop-blur-md bg-black/40">
               <span className="text-[10px] text-gold font-bold uppercase tracking-wider flex items-center gap-1">
                 <Sparkles size={11} /> {heroSlides[heroSlideIndex].title}
               </span>
               <p className="text-xs text-white font-semibold leading-tight">
                 {heroSlides[heroSlideIndex].desc}
               </p>
-            </div>
+            </div> */}
 
             {/* Slide Indicator Dots */}
             <div className="absolute top-4 right-4 flex items-center gap-1.5 z-10 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
@@ -620,11 +683,10 @@ export default function LandingPage() {
                     e.stopPropagation();
                     setHeroSlideIndex(idx);
                   }}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    heroSlideIndex === idx
+                  className={`h-2 rounded-full transition-all duration-300 ${heroSlideIndex === idx
                       ? 'w-6 bg-gold'
                       : 'w-2 bg-white/30 hover:bg-white/60'
-                  }`}
+                    }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
               ))}
@@ -665,75 +727,75 @@ export default function LandingPage() {
 
       {/* 4. Income Plan Grid */}
       {false && (
-      <section id="income" className="px-6 md:px-16 py-20 border-b border-white/5 max-w-7xl mx-auto space-y-12">
-        <div className="text-center space-y-2">
-          <h3 className="text-xs font-bold text-gold uppercase tracking-widest">Earning Vectors</h3>
-          <h2 className="text-2xl md:text-3xl font-black text-white">OUR INCOME PLAN</h2>
-          <p className="text-xs text-gray-500 max-w-md mx-auto">Multiple commission vectors designed to accelerate wealth compounding</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Cat 1: Join Bonus */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto text-xl font-bold">
-              $
-            </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Join Bonus</h4>
-            {/* <p className="text-2xl font-black text-gold">$1</p> */}
-            <p className="text-xs text-gray-500">Credited to wallet upon successful verification.</p>
+        <section id="income" className="px-6 md:px-16 py-20 border-b border-white/5 max-w-7xl mx-auto space-y-12">
+          <div className="text-center space-y-2">
+            <h3 className="text-xs font-bold text-gold uppercase tracking-widest">Earning Vectors</h3>
+            <h2 className="text-2xl md:text-3xl font-black text-white">OUR INCOME PLAN</h2>
+            <p className="text-xs text-gray-500 max-w-md mx-auto">Multiple commission vectors designed to accelerate wealth compounding</p>
           </div>
 
-          {/* Cat 2: ROI Income */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
-              <TrendingUp size={22} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Cat 1: Join Bonus */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto text-xl font-bold">
+                $
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Join Bonus</h4>
+              {/* <p className="text-2xl font-black text-gold">$1</p> */}
+              <p className="text-xs text-gray-500">Credited to wallet upon successful verification.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">ROI Income</h4>
-            {/* <p className="text-2xl font-black text-gold">0.5% Daily</p> */}
-            <p className="text-xs text-gray-500">Daily yield generated automatically on trading pool funds.</p>
-          </div>
 
-          {/* Cat 3: Referral Income */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-gold/10 border border-gold/20 text-gold flex items-center justify-center mx-auto">
-              <Users size={22} />
+            {/* Cat 2: ROI Income */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                <TrendingUp size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">ROI Income</h4>
+              {/* <p className="text-2xl font-black text-gold">0.5% Daily</p> */}
+              <p className="text-xs text-gray-500">Daily yield generated automatically on trading pool funds.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Referral Income</h4>
-            {/* <p className="text-2xl font-black text-gold">15%</p> */}
-            <p className="text-xs text-gray-500">Immediate bonus credited on direct team nodes deposit volume.</p>
-          </div>
 
-          {/* Cat 4: Booster Income */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center mx-auto">
-              <Sparkles size={22} />
+            {/* Cat 3: Referral Income */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-gold/10 border border-gold/20 text-gold flex items-center justify-center mx-auto">
+                <Users size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Referral Income</h4>
+              {/* <p className="text-2xl font-black text-gold">15%</p> */}
+              <p className="text-xs text-gray-500">Immediate bonus credited on direct team nodes deposit volume.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Booster Income</h4>
-            {/* <p className="text-2xl font-black text-gold">15%</p> */}
-            <p className="text-xs text-gray-500">Accelerated referral pools for high-activity network builders.</p>
-          </div>
 
-          {/* Cat 5: Rank / Achievement Bonus */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mx-auto">
-              <Award size={22} />
+            {/* Cat 4: Booster Income */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center mx-auto">
+                <Sparkles size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Booster Income</h4>
+              {/* <p className="text-2xl font-black text-gold">15%</p> */}
+              <p className="text-xs text-gray-500">Accelerated referral pools for high-activity network builders.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Rank / Achievement</h4>
-            {/* <p className="text-xs text-gold font-bold">One-Time Rewards</p> */}
-            <p className="text-xs text-gray-500">Payouts trigger as direct team business targets are reached.</p>
-          </div>
 
-          {/* Cat 6: Leadership Monthly Bonus */}
-          <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
-            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto">
-              <ShieldCheck size={22} />
+            {/* Cat 5: Rank / Achievement Bonus */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mx-auto">
+                <Award size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Rank / Achievement</h4>
+              {/* <p className="text-xs text-gold font-bold">One-Time Rewards</p> */}
+              <p className="text-xs text-gray-500">Payouts trigger as direct team business targets are reached.</p>
             </div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Leadership Pool</h4>
-            {/* <p className="text-xs text-gold font-bold">Monthly Dividends</p> */}
-            <p className="text-xs text-gray-500">A share of global system revenue paid out to top-tier leaders.</p>
+
+            {/* Cat 6: Leadership Monthly Bonus */}
+            <div className="p-6 rounded-2xl border border-white/5 glass-panel text-center space-y-3.5">
+              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto">
+                <ShieldCheck size={22} />
+              </div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Leadership Pool</h4>
+              {/* <p className="text-xs text-gold font-bold">Monthly Dividends</p> */}
+              <p className="text-xs text-gray-500">A share of global system revenue paid out to top-tier leaders.</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
       )}
 
       {/* 5. Social Media Join Bonus Section */}
@@ -914,11 +976,10 @@ export default function LandingPage() {
               <button
                 key={dotIdx}
                 onClick={() => setAchieverIndex(dotIdx)}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  achieverIndex === dotIdx
+                className={`h-2.5 rounded-full transition-all duration-300 ${achieverIndex === dotIdx
                     ? 'w-8 bg-gold shadow shadow-gold/50'
                     : 'w-2.5 bg-white/20 hover:bg-white/40'
-                }`}
+                  }`}
                 aria-label={`Go to slide ${dotIdx + 1}`}
               />
             ))}
@@ -1024,18 +1085,33 @@ export default function LandingPage() {
           <p className="text-xs text-gray-400 leading-relaxed max-w-md mx-auto">
             We are here to help you anytime, anywhere. Reach our operational node by submitting a ticket in your dashboard.
           </p>
-          <div className="p-5 rounded-xl border border-white/5 bg-white/[0.01] inline-grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-left max-w-lg mx-auto">
-            <div>
-              <span className="block text-gray-500 font-bold uppercase text-[9px]">Inquiries Email</span>
-              <span className="text-white font-semibold">{websiteContent.contact.email}</span>
+          <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-left max-w-3xl mx-auto shadow-lg">
+            <div className="space-y-1.5 overflow-hidden">
+              <span className="flex items-center gap-1.5 text-gray-400 font-bold uppercase text-[10px] tracking-wider">
+                <Mail size={13} className="text-gold shrink-0" />
+                Inquiries Email
+              </span>
+              <a href="mailto:supportunitynivo@gmail.com" className="block text-white font-semibold hover:text-gold transition-colors break-all">
+                supportunitynivo@gmail.com
+              </a>
             </div>
-            <div>
-              <span className="block text-gray-500 font-bold uppercase text-[9px]">Hotline Phone</span>
-              <span className="text-white font-semibold">{websiteContent.contact.phone}</span>
+            <div className="space-y-1.5 overflow-hidden">
+              <span className="flex items-center gap-1.5 text-gray-400 font-bold uppercase text-[10px] tracking-wider">
+                <Phone size={13} className="text-gold shrink-0" />
+                Hotline Phone
+              </span>
+              <a href="tel:+919288021327" className="block text-white font-semibold hover:text-gold transition-colors break-words">
+                +91 9288021327
+              </a>
             </div>
-            <div>
-              <span className="block text-gray-500 font-bold uppercase text-[9px]">Operational Office</span>
-              <span className="text-white font-semibold leading-tight">{websiteContent.contact.address}</span>
+            <div className="space-y-1.5 overflow-hidden">
+              <span className="flex items-center gap-1.5 text-gray-400 font-bold uppercase text-[10px] tracking-wider">
+                <MapPin size={13} className="text-gold shrink-0" />
+                Operational Office
+              </span>
+              <span className="block text-white font-semibold leading-relaxed break-words">
+                Dubai, United Arab Emirates
+              </span>
             </div>
           </div>
         </div>
@@ -1048,7 +1124,7 @@ export default function LandingPage() {
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 rounded-full bg-gold/25 border border-gold flex items-center justify-center font-bold text-gold">
                 <img
-                  src="/public/UnityNivo_Telegram_Bot_Logo_HD-1.png"
+                  src="/UnityNivo_Telegram_Bot_Logo_HD-1.png"
                   alt="Unity Nivo Logo"
                   className="w-full h-full object-contain"
                 /></div>
@@ -1063,7 +1139,17 @@ export default function LandingPage() {
             <ul className="space-y-2 text-gray-500">
               <li><a href="#about" className="hover:text-gold transition-colors">About Us</a></li>
               <li><a href="#home" className="hover:text-gold transition-colors">Services Info</a></li>
-              <li><a href="#home" className="hover:text-gold transition-colors">Business Plan</a></li>
+              <li>
+                <a
+                  href="/UnityNivo_Business_Plan.pdf"
+                  download="UnityNivo_Business_Plan.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-gold transition-colors flex items-center gap-1"
+                >
+                  Business Plan (PDF)
+                </a>
+              </li>
               <li><a href="#income" className="hover:text-gold transition-colors">Income Plan Grid</a></li>
             </ul>
           </div>
@@ -1275,11 +1361,7 @@ export default function LandingPage() {
 
               <button
                 type="button"
-                onClick={() => {
-                  setShowLoginModal(false);
-                  setAuthError('');
-                  setAuthSuccess('');
-                }}
+                onClick={handleCloseLoginModal}
                 className="p-1 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
               >
                 <X size={18} />
@@ -1348,7 +1430,7 @@ export default function LandingPage() {
                   />
 
                   <input
-                    type="password"
+                    type={showLoginPassword ? "text" : "password"}
                     name="password"
                     required
                     autoComplete={
@@ -1357,8 +1439,17 @@ export default function LandingPage() {
                         : 'current-password'
                     }
                     placeholder="••••••••"
-                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-10 py-2.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-gold/50 transition-colors"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                    tabIndex="-1"
+                    title={showLoginPassword ? "Hide password" : "Show password"}
+                  >
+                    {showLoginPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
                 </div>
               </div>
 
@@ -1367,8 +1458,8 @@ export default function LandingPage() {
                 type="submit"
                 disabled={isSubmitting}
                 className={`w-full mt-2 py-2.5 font-bold rounded-xl transition-all flex items-center justify-center text-xs shadow disabled:opacity-50 disabled:cursor-not-allowed ${loginRole === 'admin'
-                    ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-600/20'
-                    : 'bg-gold text-darkbg hover:bg-gold-light shadow-gold/20'
+                  ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-600/20'
+                  : 'bg-gold text-darkbg hover:bg-gold-light shadow-gold/20'
                   }`}
               >
                 {isSubmitting
@@ -1475,66 +1566,80 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-gray-400 font-bold block mb-1">Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                      <input
-                        type="password"
-                        name="password"
-                        required
-                        placeholder="••••••••"
-                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-gray-400 font-bold block mb-1">Confirm Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                      <input
-                        type="password"
-                        name="confirmPassword"
-                        required
-                        placeholder="••••••••"
-                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                      />
-                    </div>
+                <div>
+                  <label className="text-gray-400 font-bold block mb-1">Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+                    <input
+                      type={showRegPassword ? "text" : "password"}
+                      name="password"
+                      required
+                      placeholder="••••••••"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-10 py-2 text-white focus:outline-none focus:border-gold/50"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowRegPassword(!showRegPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                      tabIndex="-1"
+                      title={showRegPassword ? "Hide password" : "Show password"}
+                    >
+                      {showRegPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-gray-400 font-bold block mb-1">Country</label>
+                <div>
+                  <label className="text-gray-400 font-bold block mb-1">Confirm Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
                     <input
-                      type="text"
-                      name="country"
-                      defaultValue="India"
+                      type={showRegConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
                       required
-                      placeholder="Country"
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                      placeholder="••••••••"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-10 py-2 text-white focus:outline-none focus:border-gold/50"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                      tabIndex="-1"
+                      title={showRegConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                      {showRegConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
                   </div>
+                </div>
 
-                  <div>
-                    <label className="text-gray-400 font-bold block mb-1">District / City</label>
-                    <input
-                      type="text"
-                      name="district"
-                      defaultValue="Central"
-                      required
-                      placeholder="District"
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
-                    />
-                  </div>
+                <div>
+                  <label className="text-gray-400 font-bold block mb-1">Country</label>
+                  <input
+                    type="text"
+                    name="country"
+                    defaultValue="India"
+                    required
+                    placeholder="Country"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-gray-400 font-bold block mb-1">District / City</label>
+                  <input
+                    type="text"
+                    name="district"
+                    defaultValue="Central"
+                    required
+                    placeholder="District"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-gold/50"
+                  />
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-gray-400 font-bold block text-xs">
-                      Sponsor User ID / Refer Code
+                      Sponsor User ID / Refer Code <span className="text-red-400">*</span>
                     </label>
                     {sponsorCode && (
                       <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
@@ -1545,6 +1650,7 @@ export default function LandingPage() {
                   <input
                     type="text"
                     name="sponsor"
+                    required
                     value={sponsorCode}
                     onChange={(e) => setSponsorCode(e.target.value)}
                     placeholder="UN001 or Refer Code"
