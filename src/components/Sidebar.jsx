@@ -35,6 +35,8 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
     { id: 'deposits', name: 'Deposits', icon: ArrowDownToLine, adminOnly: false },
     { id: 'roi', name: 'ROI', icon: TrendingUp, adminOnly: true },
     { id: 'userRoi', name: 'ROI History', icon: TrendingUp, adminOnly: false, userOnly: true },
+    { id: 'roi', name: 'ROI', icon: TrendingUp, adminOnly: true },
+    { id: 'userRoi', name: 'ROI History', icon: TrendingUp, adminOnly: false, userOnly: true },
     { id: 'withdrawals', name: 'Withdrawals', icon: ArrowUpFromLine, adminOnly: false },
     { id: 'income', name: 'Income Plan', icon: DollarSign, adminOnly: false },
     { id: 'rankBonus', name: 'Rank & Bonus', icon: Award, adminOnly: false },
