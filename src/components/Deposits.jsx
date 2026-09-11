@@ -153,10 +153,14 @@ export default function Deposits() {
     }
   };
 
+  const role = localStorage.getItem("unity_nivo_role");
+  const adminToken = localStorage.getItem("unity_nivo_admin_token");
+  const isAdmin = role === "admin" || !!adminToken;
+
   const handleApproveDeposit = async (depositId) => {
     const adminToken = localStorage.getItem("unity_nivo_admin_token");
-    if (!adminToken) {
-      confirmDeposit(depositId);
+    if (!isAdmin || !adminToken) {
+      console.warn("Unauthorized attempt to approve deposit.");
       return;
     }
 
@@ -187,14 +191,13 @@ export default function Deposits() {
       getAllDeposits();
     } catch (error) {
       console.error("Approve deposit error:", error);
-      confirmDeposit(depositId);
     }
   };
 
   const handleRejectDeposit = async (depositId) => {
     const adminToken = localStorage.getItem("unity_nivo_admin_token");
-    if (!adminToken) {
-      failDeposit(depositId);
+    if (!isAdmin || !adminToken) {
+      console.warn("Unauthorized attempt to reject deposit.");
       return;
     }
 
@@ -227,7 +230,6 @@ export default function Deposits() {
       getAllDeposits();
     } catch (error) {
       console.error("Reject deposit error:", error);
-      failDeposit(depositId);
     }
   };
 
@@ -266,15 +268,12 @@ export default function Deposits() {
   };
 
   useEffect(() => {
-    const role = localStorage.getItem("unity_nivo_role");
-    const adminToken = localStorage.getItem("unity_nivo_admin_token");
-
-    if (role === "admin" || adminToken) {
+    if (isAdmin) {
       getAllDeposits();
     } else {
       fetchMyDeposits();
     }
-  }, []);
+  }, [isAdmin]);
 
   const filteredDeposits = (myDeposits || []).filter((deposit) => {
     const status = deposit?.status?.toLowerCase() || "";
@@ -354,29 +353,39 @@ export default function Deposits() {
         <h3 className="font-bold mb-2">Submit Payment Proof</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs mb-1">Amount (USDT)</label>
+            <label className="block text-xs mb-1 font-semibold text-gray-300">Amount (USDT / USD)</label>
             <input
               type="number"
               step="0.01"
               value={paymentAmount}
               onChange={e => setPaymentAmount(e.target.value)}
-              className="w-full bg-black/30 border border-emerald-500/30 rounded px-2 py-1 text-xs text-white focus:outline-none"
+              placeholder="Enter amount (e.g. 100)"
+              className="w-full bg-black/30 border border-emerald-500/30 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-400"
               required
             />
+            {/* Live USD to INR Rate Indicator */}
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-1 text-[11px]">
+              <span className="text-gray-400">Current Rate: <span className="font-bold text-gold">1 USD = ₹95.40 INR</span></span>
+              {paymentAmount && Number(paymentAmount) > 0 && (
+                <span className="font-bold text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-md border border-emerald-500/30">
+                  {paymentAmount} USD = ₹{(Number(paymentAmount) * 95.4).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} INR
+                </span>
+              )}
+            </div>
           </div>
           <div>
-            <label className="block text-xs mb-1">Screenshot</label>
+            <label className="block text-xs mb-1 font-semibold text-gray-300">Screenshot</label>
             <input
               type="file"
               accept="image/*"
               onChange={e => setPaymentScreenshot(e.target.files[0])}
-              className="w-full bg-black/30 border border-emerald-500/30 rounded px-2 py-1 text-xs text-white focus:outline-none"
+              className="w-full bg-black/30 border border-emerald-500/30 rounded px-2 py-1.5 text-xs text-white focus:outline-none"
               required
             />
           </div>
         </div>
-        {uploadStatus && <p className="mt-2 text-xs">{uploadStatus}</p>}
-        <button type="submit" className="mt-3 px-4 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs">
+        {uploadStatus && <p className="mt-2 text-xs font-semibold">{uploadStatus}</p>}
+        <button type="submit" className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">
           Upload Payment
         </button>
       </form>
@@ -827,7 +836,7 @@ export default function Deposits() {
                       const st = (deposit.status || '').toLowerCase();
                       const isPendingOrHold = st === 'hold' || st === 'pending';
 
-                      if (isPendingOrHold) {
+                      if (isAdmin && isPendingOrHold) {
                         return (
                           <div className="flex items-center justify-end space-x-1.5">
                             <button
@@ -845,6 +854,12 @@ export default function Deposits() {
                               Reject
                             </button>
                           </div>
+                        );
+                      }
+
+                      if (isPendingOrHold) {
+                        return (
+                          <span className="text-xs text-amber-400 font-semibold italic">Pending Audit</span>
                         );
                       }
 

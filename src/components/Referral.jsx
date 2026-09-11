@@ -1,5 +1,5 @@
 
-import React, { useContext,   useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Copy,
   Check,
@@ -10,7 +10,9 @@ import {
   Send,
 //   Facebook,
   ExternalLink,
-  Link as LinkIcon
+  Link as LinkIcon,
+  DollarSign,
+  RefreshCw
 } from 'lucide-react';
 
 import { AppContext } from '../context/AppContext';
@@ -19,6 +21,47 @@ export default function Referral() {
   const { currentUser } = useContext(AppContext);
 
   const [copied, setCopied] = useState(false);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const fetchReferralStats = async () => {
+    const token = localStorage.getItem("unity_nivo_token");
+    if (!token) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://unity-nivo-backend-nodejs.onrender.com';
+      const res = await fetch(`${BASE_URL}/api/referral/stats`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const json = await res.json();
+      console.log("REFERRAL STATS DATA:", json);
+
+      if (res.ok) {
+        const statsData = json?.data || json?.stats || json;
+        setStats(statsData);
+      } else {
+        setError(json?.message || "Failed to fetch referral stats");
+      }
+    } catch (err) {
+      console.error("Referral stats fetch error:", err);
+      setError("Unable to load referral stats");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReferralStats();
+  }, []);
 
   /*
    * Backend se referralCode / userId jo available ho
@@ -31,6 +74,7 @@ export default function Referral() {
    */
 
   const referralCode =
+    stats?.referralCode ||
     currentUser?.referralCode ||
     currentUser?.userId ||
     currentUser?.userid ||
@@ -120,14 +164,26 @@ export default function Referral() {
     <div className="p-4 md:p-6 space-y-6">
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">
-          Referral
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            Referral
+          </h1>
 
-        <p className="mt-1 text-sm text-gray-400">
-          Share your referral link and grow your network.
-        </p>
+          <p className="mt-1 text-sm text-gray-400">
+            Share your referral link and grow your network.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={fetchReferralStats}
+          disabled={loading}
+          className="inline-flex items-center gap-2 rounded-xl border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-bold text-gold transition hover:bg-gold/20 disabled:opacity-50 self-start sm:self-auto"
+        >
+          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+          {loading ? "Refreshing..." : "Refresh Stats"}
+        </button>
       </div>
 
       {/* Main Referral Card */}
@@ -347,81 +403,202 @@ export default function Referral() {
       </div>
 
       {/* Referral Stats */}
-      <div className="
-        grid
-        grid-cols-1
-        sm:grid-cols-2
-        lg:grid-cols-3
-        gap-4
-      ">
+      {(() => {
+        const totalReferrals =
+          stats?.directReferralCount ??
+          stats?.totalReferrals ??
+          stats?.totalReferred ??
+          stats?.referredUsersCount ??
+          stats?.count ??
+          stats?.totalReferredUsers ??
+          stats?.totalCount ??
+          stats?.downline?.length ??
+          currentUser?.referralsCount ??
+          0;
 
-        <div className="
-          p-5
-          rounded-2xl
-          bg-white/[0.03]
-          border border-white/10
-        ">
-          <div className="flex items-center justify-between">
+        const activeReferrals =
+          stats?.activeReferrals ??
+          stats?.activeCount ??
+          stats?.activeReferred ??
+          stats?.activeReferralsCount ??
+          (Array.isArray(stats?.downline)
+            ? stats.downline.filter((u) => (u?.status || '').toLowerCase() === 'active').length
+            : 0);
 
-            <div>
-              <p className="text-xs text-gray-500 uppercase">
-                Total Referrals
-              </p>
+        const referredUserDeposits =
+          stats?.totalDownlineInvestment ??
+          stats?.totalReferredDeposits ??
+          stats?.referredUserDeposits ??
+          stats?.totalDepositAmount ??
+          stats?.referredDeposits ??
+          stats?.totalDeposits ??
+          stats?.depositTotal ??
+          stats?.totalAmount ??
+          0;
 
-              <p className="mt-2 text-2xl font-bold text-white">
-                0
-              </p>
+        const referralIncome =
+          stats?.totalReferralEarned ??
+          stats?.referralIncome ??
+          stats?.income ??
+          stats?.earned ??
+          currentUser?.earnings?.referralIncome ??
+          0;
+
+        const referredUsersList = Array.isArray(stats?.downline)
+          ? stats.downline
+          : Array.isArray(stats?.referredUsers)
+          ? stats.referredUsers
+          : Array.isArray(stats?.users)
+          ? stats.users
+          : Array.isArray(stats?.referrals)
+          ? stats.referrals
+          : [];
+
+        return (
+          <div className="space-y-6">
+            {error && (
+              <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-400">
+                {error}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Total Referrals Card */}
+              <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider">
+                      Total Referrals
+                    </p>
+                    <p className="mt-2 text-2xl font-bold text-white">
+                      {loading ? '...' : totalReferrals}
+                    </p>
+                  </div>
+                  <Users className="text-gold" size={24} />
+                </div>
+              </div>
+
+              {/* Active Referrals Card */}
+              <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider">
+                      Active Referrals
+                    </p>
+                    <p className="mt-2 text-2xl font-bold text-white">
+                      {loading ? '...' : activeReferrals}
+                    </p>
+                  </div>
+                  <UserPlus className="text-emerald-400" size={24} />
+                </div>
+              </div>
+
+              {/* Referred Users Deposits Card */}
+              <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider">
+                      Referred Deposits
+                    </p>
+                    <p className="mt-2 text-2xl font-bold text-emerald-400">
+                      {loading ? '...' : `$${Number(referredUserDeposits).toFixed(2)}`}
+                    </p>
+                  </div>
+                  <DollarSign className="text-emerald-400" size={24} />
+                </div>
+              </div>
+
+              {/* Referral Income Card */}
+              <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider">
+                      Referral Income
+                    </p>
+                    <p className="mt-2 text-2xl font-bold text-gold">
+                      {loading ? '...' : `$${Number(referralIncome).toFixed(2)}`}
+                    </p>
+                  </div>
+                  <Share2 className="text-gold" size={24} />
+                </div>
+              </div>
             </div>
 
-            <Users className="text-gold" size={24} />
+            {/* Referred Users List Table (if provided in API response) */}
+            {referredUsersList.length > 0 && (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                <h3 className="text-base font-bold text-white mb-4">
+                  Downline / Referred Users ({referredUsersList.length})
+                </h3>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs text-gray-300">
+                    <thead className="bg-black/30 text-[11px] font-bold text-gold uppercase border-b border-white/10">
+                      <tr>
+                        <th className="px-4 py-3">User Info</th>
+                        <th className="px-4 py-3">User ID / Code</th>
+                        <th className="px-4 py-3 text-right">Investment</th>
+                        <th className="px-4 py-3 text-right">Commission</th>
+                        <th className="px-4 py-3 text-center">Joined Date</th>
+                        <th className="px-4 py-3 text-center">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {referredUsersList.map((user, idx) => {
+                        const statusStr = (user.status || 'inactive').toLowerCase();
+                        const isActive = statusStr === 'active';
+                        const joinedDateStr = user.joinedAt || user.createdAt;
+                        const formattedDate = joinedDateStr
+                          ? new Date(joinedDateStr).toLocaleDateString(undefined, {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })
+                          : 'N/A';
+
+                        return (
+                          <tr key={user._id || user.userId || idx} className="hover:bg-white/5 transition">
+                            <td className="px-4 py-3 font-semibold text-white">
+                              <div>{user.name || user.userName || 'N/A'}</div>
+                              {user.email && (
+                                <div className="text-[10px] text-gray-400 font-normal">{user.email}</div>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 font-mono text-gray-400">
+                              <div>{user.userId || 'N/A'}</div>
+                              {user.referralCode && (
+                                <div className="text-[10px] text-gold">{user.referralCode}</div>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-right font-bold text-emerald-400">
+                              ${Number(user.investmentAmount ?? user.totalDeposit ?? user.depositAmount ?? 0).toFixed(2)}
+                            </td>
+                            <td className="px-4 py-3 text-right font-bold text-gold">
+                              ${Number(user.commissionEarned ?? 0).toFixed(2)}
+                            </td>
+                            <td className="px-4 py-3 text-center text-gray-400">
+                              {formattedDate}
+                            </td>
+                            <td className="px-4 py-3 text-center capitalize">
+                              <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                isActive
+                                  ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/20'
+                                  : 'bg-red-950/50 text-red-400 border border-red-500/20'
+                              }`}>
+                                {user.status || 'Inactive'}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-
-        <div className="
-          p-5
-          rounded-2xl
-          bg-white/[0.03]
-          border border-white/10
-        ">
-          <div className="flex items-center justify-between">
-
-            <div>
-              <p className="text-xs text-gray-500 uppercase">
-                Active Referrals
-              </p>
-
-              <p className="mt-2 text-2xl font-bold text-white">
-                0
-              </p>
-            </div>
-
-            <UserPlus className="text-emerald-400" size={24} />
-          </div>
-        </div>
-
-        <div className="
-          p-5
-          rounded-2xl
-          bg-white/[0.03]
-          border border-white/10
-        ">
-          <div className="flex items-center justify-between">
-
-            <div>
-              <p className="text-xs text-gray-500 uppercase">
-                Referral Income
-              </p>
-
-              <p className="mt-2 text-2xl font-bold text-gold">
-                $0.00
-              </p>
-            </div>
-
-            <Share2 className="text-gold" size={24} />
-          </div>
-        </div>
-
-      </div>
+        );
+      })()}
 
     </div>  
   );
