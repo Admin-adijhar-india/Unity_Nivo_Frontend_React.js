@@ -28,7 +28,7 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
 
   const allMenuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, adminOnly: false },
-    // Referral Menu 
+    // Referral Menu added
     { id: 'referral', name: 'Referral', icon: UserPlus, adminOnly: false },
     { id: 'users', name: 'Users', icon: Users, adminOnly: true },
     { id: 'deposits', name: 'Deposits', icon: ArrowDownToLine, adminOnly: false },
