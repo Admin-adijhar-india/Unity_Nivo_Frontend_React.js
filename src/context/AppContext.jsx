@@ -386,13 +386,8 @@ export const AppProvider = ({ children }) => {
       }));
     }
 
-<<<<<<< HEAD
-    return { 
-      success: true, 
-=======
     return {
       success: true,
->>>>>>> 2111784 (77)
       message: `Withdrawal request of $${numAmt.toFixed(2)} submitted successfully! (Net Payout: $${netAmount.toFixed(2)})`
     };
   };
